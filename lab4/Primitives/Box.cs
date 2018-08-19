@@ -19,7 +19,7 @@ namespace lab4
         {
             points = new List<Vector3D>();
             pointsForNormals = new List<Vector3D>();
-            this.color = color;
+            this.Color = color;
             points.Add(new Vector3D(-0.5, 0, -0.5));
             points.Add(new Vector3D(0.5, 0, -0.5));
             points.Add(new Vector3D(0.5, 1, -0.5));
@@ -78,18 +78,18 @@ namespace lab4
         {
             ApplyTrasformations();
             List<Triangle> result = new List<Triangle>();
-            result.Add(new Triangle(points[0], points[5], points[1], pointsForNormals[0], pointsForNormals[15], pointsForNormals[3], points[0], points[5], points[1], color));
-            result.Add(new Triangle(points[0], points[4], points[5], pointsForNormals[0], pointsForNormals[12], pointsForNormals[15], points[0], points[4], points[5], color));
-            result.Add(new Triangle(points[0], points[1], points[2], pointsForNormals[1], pointsForNormals[5], pointsForNormals[7], points[0], points[1], points[2], color));
-            result.Add(new Triangle(points[0], points[2], points[3], pointsForNormals[1], pointsForNormals[7], pointsForNormals[11], points[0], points[2], points[3], color));
-            result.Add(new Triangle(points[1], points[5], points[2], pointsForNormals[4], pointsForNormals[17], pointsForNormals[8], points[1], points[5], points[2], color));
-            result.Add(new Triangle(points[2], points[5], points[6], pointsForNormals[8], pointsForNormals[17], pointsForNormals[20], points[2], points[5], points[6], color));
-            result.Add(new Triangle(points[0], points[3], points[7], pointsForNormals[2], pointsForNormals[10], pointsForNormals[22], points[0], points[3], points[7], color));
-            result.Add(new Triangle(points[0], points[7], points[4], pointsForNormals[2], pointsForNormals[22], pointsForNormals[14], points[0], points[7], points[4], color));
-            result.Add(new Triangle(points[4], points[7], points[5], pointsForNormals[13], pointsForNormals[23], pointsForNormals[16], points[4], points[7], points[5], color));
-            result.Add(new Triangle(points[7], points[6], points[5], pointsForNormals[23], pointsForNormals[19], pointsForNormals[16], points[7], points[6], points[5], color));
-            result.Add(new Triangle(points[3], points[2], points[7], pointsForNormals[9], pointsForNormals[6], pointsForNormals[21], points[3], points[2], points[7], color));
-            result.Add(new Triangle(points[2], points[6], points[7], pointsForNormals[6], pointsForNormals[18], pointsForNormals[21], points[2], points[6], points[7], color));
+            result.Add(new Triangle(points[0], points[5], points[1], pointsForNormals[0], pointsForNormals[15], pointsForNormals[3], points[0], points[5], points[1], Color));
+            result.Add(new Triangle(points[0], points[4], points[5], pointsForNormals[0], pointsForNormals[12], pointsForNormals[15], points[0], points[4], points[5], Color));
+            result.Add(new Triangle(points[0], points[1], points[2], pointsForNormals[1], pointsForNormals[5], pointsForNormals[7], points[0], points[1], points[2], Color));
+            result.Add(new Triangle(points[0], points[2], points[3], pointsForNormals[1], pointsForNormals[7], pointsForNormals[11], points[0], points[2], points[3], Color));
+            result.Add(new Triangle(points[1], points[5], points[2], pointsForNormals[4], pointsForNormals[17], pointsForNormals[8], points[1], points[5], points[2], Color));
+            result.Add(new Triangle(points[2], points[5], points[6], pointsForNormals[8], pointsForNormals[17], pointsForNormals[20], points[2], points[5], points[6], Color));
+            result.Add(new Triangle(points[0], points[3], points[7], pointsForNormals[2], pointsForNormals[10], pointsForNormals[22], points[0], points[3], points[7], Color));
+            result.Add(new Triangle(points[0], points[7], points[4], pointsForNormals[2], pointsForNormals[22], pointsForNormals[14], points[0], points[7], points[4], Color));
+            result.Add(new Triangle(points[4], points[7], points[5], pointsForNormals[13], pointsForNormals[23], pointsForNormals[16], points[4], points[7], points[5], Color));
+            result.Add(new Triangle(points[7], points[6], points[5], pointsForNormals[23], pointsForNormals[19], pointsForNormals[16], points[7], points[6], points[5], Color));
+            result.Add(new Triangle(points[3], points[2], points[7], pointsForNormals[9], pointsForNormals[6], pointsForNormals[21], points[3], points[2], points[7], Color));
+            result.Add(new Triangle(points[2], points[6], points[7], pointsForNormals[6], pointsForNormals[18], pointsForNormals[21], points[2], points[6], points[7], Color));
 
             return result;
         }

@@ -70,10 +70,10 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.listBox3 = new System.Windows.Forms.ListBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.applyTRSopperationsToPrimitiveButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.cameraAndLightApplyButton = new System.Windows.Forms.Button();
             this.label25 = new System.Windows.Forms.Label();
             this.textBox21 = new System.Windows.Forms.TextBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -201,7 +201,7 @@
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.tabControl1, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.textBox10, 0, 5);
-            this.tableLayoutPanel2.Controls.Add(this.button1, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.applyTRSopperationsToPrimitiveButton, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.panel3, 0, 3);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
@@ -572,21 +572,21 @@
             this.textBox10.TabIndex = 2;
             this.textBox10.Text = "FPS:";
             // 
-            // button1
+            // applyTRSopperationsToPrimitiveButton
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button1.Location = new System.Drawing.Point(198, 162);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 22);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Apply";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.applyTRSopperationsToPrimitiveButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.applyTRSopperationsToPrimitiveButton.Location = new System.Drawing.Point(198, 162);
+            this.applyTRSopperationsToPrimitiveButton.Name = "applyTRSopperationsToPrimitiveButton";
+            this.applyTRSopperationsToPrimitiveButton.Size = new System.Drawing.Size(75, 22);
+            this.applyTRSopperationsToPrimitiveButton.TabIndex = 3;
+            this.applyTRSopperationsToPrimitiveButton.Text = "Apply";
+            this.applyTRSopperationsToPrimitiveButton.UseVisualStyleBackColor = true;
+            this.applyTRSopperationsToPrimitiveButton.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel3
             // 
             this.panel3.Controls.Add(this.button3);
-            this.panel3.Controls.Add(this.button2);
+            this.panel3.Controls.Add(this.cameraAndLightApplyButton);
             this.panel3.Controls.Add(this.label25);
             this.panel3.Controls.Add(this.textBox21);
             this.panel3.Controls.Add(this.checkBox2);
@@ -629,15 +629,15 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // cameraAndLightApplyButton
             // 
-            this.button2.Location = new System.Drawing.Point(158, 218);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(105, 23);
-            this.button2.TabIndex = 27;
-            this.button2.Text = "Apply";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.cameraAndLightApplyButton.Location = new System.Drawing.Point(158, 218);
+            this.cameraAndLightApplyButton.Name = "cameraAndLightApplyButton";
+            this.cameraAndLightApplyButton.Size = new System.Drawing.Size(105, 23);
+            this.cameraAndLightApplyButton.TabIndex = 27;
+            this.cameraAndLightApplyButton.Text = "Apply";
+            this.cameraAndLightApplyButton.UseVisualStyleBackColor = true;
+            this.cameraAndLightApplyButton.Click += new System.EventHandler(this.button2_Click);
             // 
             // label25
             // 
@@ -926,7 +926,7 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button applyTRSopperationsToPrimitiveButton;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.Panel panel3;
@@ -954,7 +954,7 @@
         private System.Windows.Forms.TextBox textBox19;
         private System.Windows.Forms.TextBox textBox18;
         private System.Windows.Forms.TextBox textBox17;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button cameraAndLightApplyButton;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox textBox21;
         private System.Windows.Forms.Button button3;

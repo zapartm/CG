@@ -10,7 +10,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace lab4
 {
-
     [Serializable]
     class Cylinder : Primitive, ISerializable
     {
@@ -21,7 +20,7 @@ namespace lab4
         public Cylinder(Color color) : base()
         {
             //base.child = this as Cylinder;
-            base.color = color;
+            base.Color = color;
             N = 12;
             Radius = 1;
             Height = 1;
@@ -72,7 +71,7 @@ namespace lab4
 
             for (int i = 0; i < N; i++)
             {
-                Vector3D p1, p2, p3, pn1, pn2, pn3, vn1, vn2, vn3;
+                Vector3D p1, p2, p3, pn1, pn2, pn3;
                 // side top-flat triangles
                 p1 = points[2 * i];
                 p2 = points[(2 * i + 1) % n];
@@ -80,7 +79,7 @@ namespace lab4
                 pn1 = pointsForNormals[2 * i];
                 pn2 = pointsForNormals[(2 * i + 1) % n];
                 pn3 = pointsForNormals[(2 * (i + 1) + 1) % n];
-                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, color));
+                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, Color));
 
                 // side bottom-flat triangles
                 p1 = points[2 * i];
@@ -89,7 +88,7 @@ namespace lab4
                 pn1 = pointsForNormals[2 * i];
                 pn2 = pointsForNormals[(2 * (i + 1) + 1) % n];
                 pn3 = pointsForNormals[(2 * (i + 1)) % n];
-                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, color));
+                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, Color));
 
                 // top
                 p1 = points[(2 * i + 1) % n];
@@ -98,7 +97,7 @@ namespace lab4
                 pn1 = tmpList[(2 * i + 1 ) % n  ];
                 pn2 = tmpList[n + 1];
                 pn3 = tmpList[(2 * (i + 1) + 1 ) % n];
-                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, color));
+                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, Color));
 
                 // bottom
                 p1 = points[2 * i];
@@ -107,7 +106,7 @@ namespace lab4
                 pn1 = tmpList[2 * i];
                 pn2 = tmpList[(2 * (i + 1)) % n];
                 pn3 = tmpList[n];
-                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, color));
+                result.Add(new Triangle(p1, p2, p3, pn1, pn2, pn3, p1, p2, p3, Color));
             }
 
             return result;

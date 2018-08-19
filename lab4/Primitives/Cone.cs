@@ -20,7 +20,7 @@ namespace lab4
         public int N;
         public Cone(Color color) : base()
         {
-            base.color = color;
+            base.Color = color;
             N = 3;
             Radius = 1;
             Height = 2;
@@ -57,8 +57,8 @@ namespace lab4
 
             for (int i = 0; i < N; i++)
             {
-                result.Add(new Triangle(points[N], points[i], points[(i + 1) % N], color));
-                result.Add(new Triangle(points[N + 1], points[(i + 1) % N], points[i], color));
+                result.Add(new Triangle(points[N], points[i], points[(i + 1) % N], Color));
+                result.Add(new Triangle(points[N + 1], points[(i + 1) % N], points[i], Color));
             }
 
             return result;

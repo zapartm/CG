@@ -45,5 +45,12 @@ namespace lab4
             if (c == null) return false;
             return c.fov == this.fov && c.position.Equals(this.position) && c.target.Equals(this.target);
         }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 867071694;
+            hashCode = hashCode * -1521134295 + id.GetHashCode();
+            return hashCode;
+        }
     }
 }

@@ -13,16 +13,22 @@ namespace lab4
     abstract class Primitive : ISerializable
     {
         protected static int objectsCounter = 0;
+        protected int id;
+        protected int idUnique;
+
+        // original vertices position for object and its normals
         private List<Vector3D> pointsOriginal;
+        private List<Vector3D> pointsForNormalsOriginal;
+
+        // current vertices position = original vertices + TRS matrices
         protected List<Vector3D> points;
         protected List<Vector3D> pointsForNormals;
-        private List<Vector3D> pointsForNormalsOriginal;
+        
+        // currently applied transformations
         private Matrix4x4 translationMatrix;
         private Matrix4x4 rotationMatrix;
         private Matrix4x4 scaleMatrix;
-        protected Color color;
-        protected int id;
-        protected int id_unique;
+        public Color Color { get; set; }
 
         public double translationX = 0;
         public double translationY = 0;
@@ -34,6 +40,9 @@ namespace lab4
         public double ScaleY = 1;
         public double ScaleZ = 1;
 
+        /// <summary>
+        /// Each tuple consists of object vertex and cooresponding end of normal vector
+        /// </summary>
         public List<Tuple<Vector4D, Vector4D>> getPointsAndNormals()
         {
             var result = new List<Tuple<Vector4D, Vector4D>>();
@@ -46,16 +55,17 @@ namespace lab4
 
         public int GetID()
         {
-            return id_unique;
+            return idUnique;
         }
 
         public Primitive()
         {
-            id_unique = objectsCounter++;
+            idUnique = objectsCounter++;
             translationMatrix = new Matrix4x4();
             rotationMatrix = new Matrix4x4();
             scaleMatrix = new Matrix4x4();
         }
+        abstract public List<Triangle> GetTriangles();
 
         public Primitive(SerializationInfo info, StreamingContext ctxt)
         {
@@ -64,7 +74,7 @@ namespace lab4
             translationMatrix = (Matrix4x4)info.GetValue("translationMatrix", typeof(Matrix4x4));
             rotationMatrix = (Matrix4x4)info.GetValue("rotationMatrix", typeof(Matrix4x4));
             scaleMatrix = (Matrix4x4)info.GetValue("scaleMatrix", typeof(Matrix4x4));
-            color = (Color)info.GetValue("Color", typeof(Color));
+            Color = (Color)info.GetValue("Color", typeof(Color));
             translationX = (double)info.GetValue("tx", typeof(double));
             translationY = (double)info.GetValue("ty", typeof(double));
             translationZ = (double)info.GetValue("tz", typeof(double));
@@ -84,7 +94,7 @@ namespace lab4
             info.AddValue("translationMatrix", translationMatrix);
             info.AddValue("rotationMatrix", rotationMatrix);
             info.AddValue("scaleMatrix", scaleMatrix);
-            info.AddValue("Color", color);
+            info.AddValue("Color", Color);
             info.AddValue("tx", translationX);
             info.AddValue("ty", translationY);
             info.AddValue("tz", translationZ);
@@ -105,17 +115,6 @@ namespace lab4
             pointsForNormalsOriginal.AddRange(pointsForNormals);
         }
 
-        public Color GetColor()
-        {
-            return color;
-        }
-
-        public void SetColor(Color color)
-        {
-            this.color = color;
-        }
-
-        abstract public List<Triangle> GetTriangles();
 
         protected void ApplyTrasformations()
         {
@@ -129,6 +128,7 @@ namespace lab4
                 v = M * v;
                 points[i] = new Vector3D(v.values[0], v.values[1], v.values[2]);
             }
+
             n = pointsForNormals.Count;
             for (int i = 0; i < n; i++)
             {
@@ -150,15 +150,6 @@ namespace lab4
             translationX = x;
             translationY = y;
             translationZ = z;
-        }
-
-        public void Translate(Vector3D v)
-        {
-            Matrix4x4 Mmod = new Matrix4x4();
-            Mmod[3, 0] = v.X;
-            Mmod[3, 1] = v.Y;
-            Mmod[3, 2] = v.Z;
-            translationMatrix = Mmod;
         }
 
         public void Rotate(int x, int y, int z)

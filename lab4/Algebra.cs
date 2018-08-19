@@ -317,10 +317,15 @@ namespace lab4
         {
             string str = "[";
             foreach (var v in values)
-                str += v.ToString("0.00000") + " ";
+                str += v.ToString("0.000") + " ";
             str += "]";
             //str = values[2].ToString("0.000") + " ";
             return str;
+        }
+
+        public override int GetHashCode()
+        {
+            return 1649527923 + EqualityComparer<double[]>.Default.GetHashCode(values);
         }
     }
 }

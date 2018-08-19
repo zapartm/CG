@@ -121,10 +121,13 @@ namespace lab4
                         max = zbuff[i, j];
                 }
             }
-
+            
             using (Graphics g = Graphics.FromImage(pictureBox1.Image))
             {
                 g.Clear(BackgroundColor);
+                g.DrawLine(Pens.Red, Get2DPointWithScaling(center), Get2DPointWithScaling(axis.Item1));
+                g.DrawLine(Pens.Green, Get2DPointWithScaling(center), Get2DPointWithScaling(axis.Item2));
+                g.DrawLine(Pens.Yellow, Get2DPointWithScaling(center), Get2DPointWithScaling(axis.Item3));
 
                 unsafe
                 {
@@ -163,7 +166,6 @@ namespace lab4
                 //    g.DrawLine(p, Get2DPointWithScaling(tup.Item1), Get2DPointWithScaling(tup.Item2));
                 //}
 
-
                 if (displayMesh)
                 {
                     Pen p = Pens.White;
@@ -174,12 +176,8 @@ namespace lab4
                         g.DrawLine(p, Get2DPoint(v.vertices[2]), Get2DPoint(v.vertices[0]));
                     }
                 }
-
-                g.DrawLine(Pens.Red, Get2DPointWithScaling(center), Get2DPointWithScaling(axis.Item1));
-                g.DrawLine(Pens.Green, Get2DPointWithScaling(center), Get2DPointWithScaling(axis.Item2));
-                g.DrawLine(Pens.Yellow, Get2DPointWithScaling(center), Get2DPointWithScaling(axis.Item3));
-
             }
+
             pictureBox1.Refresh();
             stopwatch.Stop();
             var elapsedTime = stopwatch.ElapsedMilliseconds;
@@ -227,8 +225,8 @@ namespace lab4
         Point lastMousePosition;
         int movementCounterX = 0;
         int movementCounterY = 0;
-        int speed = 6;
-        double change = 0.25;
+        int speed = 3;
+        double change = 0.1;
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -247,17 +245,16 @@ namespace lab4
                 {
                     if (movementCounterX < 0)
                     {
-                        activeCamera.MoveTarget(change, 0, 0);
-                        RenderScene();
-                    }
-
-                    else
-                    {
                         activeCamera.MoveTarget(-change, 0, 0);
                         RenderScene();
                     }
+                    else
+                    {
+                        activeCamera.MoveTarget(change, 0, 0);
+                        RenderScene();
+                    }
                     movementCounterX = 0;
-                    movementCounterY = 0;
+                    //movementCounterY = 0;
                 }
                 else
                 {
@@ -279,7 +276,7 @@ namespace lab4
                         activeCamera.MoveTarget(0, -change, 0);
                         RenderScene();
                     }
-                    movementCounterX = 0;
+                    //movementCounterX = 0;
                     movementCounterY = 0;
                 }
                 else

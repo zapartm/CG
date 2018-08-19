@@ -183,9 +183,6 @@ namespace lab4
             vn2 = normalVectors[j];
 
             // cases when triangle is already upper or bottom triangle
-            
-            var tmp4 = new Vector4D();
-            var tmp3 = new Vector3D();
             if (Math.Abs(v2.values[1] - v1.values[1]) < eps2)
             {
                 if (v1.values[0] > v2.values[0])
