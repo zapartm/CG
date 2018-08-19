@@ -227,7 +227,7 @@ namespace lab4
         {
             this.values[0] = this.values[0] * (w / 2) + (w / 2);
             this.values[1] = this.values[1] * (h / 2) + (h / 2);
-            this.values[2] = 1;
+            this.values[2] = this.values[2];
         }
 
         public Vector4D(double v1, double v2, double v3, double v4)

@@ -74,7 +74,11 @@ namespace lab4
             WorldCoordinates[2] = wc3;
         }
 
-        public Triangle(Vector4D v1, Vector4D v2, Vector4D v3, Vector4D vn1, Vector4D vn2, Vector4D vn3, Vector3D wc1, Vector3D wc2, Vector3D wc3,  Color color)
+        /// <summary>
+        /// vertices | normal vectors | World-space coordinates
+        /// </summary>
+       
+        public Triangle(Vector4D v1, Vector4D v2, Vector4D v3, Vector4D vn1, Vector4D vn2, Vector4D vn3, Vector3D wc1, Vector3D wc2, Vector3D wc3, Color color)
         {
             this.color = color;
             vertices = new Vector4D[3];
@@ -129,6 +133,7 @@ namespace lab4
         /// <returns>upper and bottom triangle</returns>
         public Tuple<Triangle, Triangle> SplitHorizontal()
         {
+            const double eps2 = 1;
             Vector4D v1 = new Vector4D(); // highest
             Vector4D v2 = new Vector4D(); // middle 
             Vector4D v3 = new Vector4D(); // lowest
@@ -141,8 +146,15 @@ namespace lab4
 
             double min = double.MaxValue;
             double max = double.MinValue;
-            int ind_min = -1;
-            int ind_max = -1;
+            int indMin = -1;
+            int indMax = -1;
+
+            if(Math.Abs(vertices[0].values[1] - vertices[1].values[1]) < eps2 &&
+                Math.Abs(vertices[1].values[1] - vertices[2].values[1]) < eps2)
+            {
+                // all 3 vertices inline
+                return new Tuple<Triangle, Triangle>(null, null);
+            }
 
             for (int i = 0; i < 3; i++)
             {
@@ -152,72 +164,77 @@ namespace lab4
                     vn1 = normalVectors[i];
                     ws1 = WorldCoordinates[i];
                     max = vertices[i].values[1];
-                    ind_max = i;
+                    indMax = i;
                 }
+
                 if (vertices[i].values[1] < min) // compare Y values
                 {
                     v3 = vertices[i];
                     vn3 = normalVectors[i];
                     ws3 = WorldCoordinates[i];
                     min = vertices[i].values[1];
-                    ind_min = i;
-                }
-            }
-            for (int j = 0; j < 3; j++)
-            {
-                if (j != ind_min && j != ind_max)
-                {
-                    v2 = vertices[j];
-                    ws2 = WorldCoordinates[j];
-                    vn2 = normalVectors[j];
-                    break;
+                    indMin = i;
                 }
             }
 
+            int j = 3 - (indMax + indMin);
+            v2 = vertices[j];
+            ws2 = WorldCoordinates[j];
+            vn2 = normalVectors[j];
+
             // cases when triangle is already upper or bottom triangle
-            double eps2 = 0.1;
+            
             var tmp4 = new Vector4D();
             var tmp3 = new Vector3D();
             if (Math.Abs(v2.values[1] - v1.values[1]) < eps2)
             {
                 if (v1.values[0] > v2.values[0])
                 {
-                    return new Tuple<Triangle, Triangle>(null, new Triangle(v2, v1, v3, tmp4, tmp4, tmp4, tmp3, tmp3, tmp3, this.color));
+                    return new Tuple<Triangle, Triangle>(null, new Triangle(v2, v1, v3, vn2, vn1, vn3, ws2, ws1, ws3, this.color));
                 }
                 else
                 {
-                    return new Tuple<Triangle, Triangle>(null, new Triangle(v1, v2, v3, tmp4, tmp4, tmp4, tmp3, tmp3, tmp3, this.color));
+                    return new Tuple<Triangle, Triangle>(null, new Triangle(v1, v2, v3, vn1, vn2, vn3, ws1, ws2, ws3, this.color));
                 }
             }
             if (Math.Abs(v2.values[1] - v3.values[1]) < eps2)
             {
                 if (v2.values[0] > v3.values[0])
                 {
-                    return new Tuple<Triangle, Triangle>(new Triangle(v1, v2, v3, tmp4, tmp4, tmp4, tmp3, tmp3, tmp3, this.color), null);
+                    return new Tuple<Triangle, Triangle>(new Triangle(v1, v2, v3, vn1, vn2, vn3, ws1, ws2, ws3, this.color), null);
                 }
                 else
                 {
-                    return new Tuple<Triangle, Triangle>(new Triangle(v1, v3, v2, tmp4, tmp4, tmp4, tmp3, tmp3, tmp3, this.color), null);
+                    return new Tuple<Triangle, Triangle>(new Triangle(v1, v3, v2, vn1, vn3, vn2, ws1, ws3, ws2, this.color), null);
                 }
             }
 
-            double m = (v1.values[1] - v3.values[1]) / (v1.values[0] - v3.values[0]);
-            double b = v1.values[1] - v1.values[0] * m;
-            double Ys = v2.values[1];
-            double eps = 0.001;
+            const double eps = 0.001;
             double Xs = 0;
-            if (Math.Abs(m) < eps)
-                Xs = v1.values[0];
-            else
-                Xs = (Ys - b) / m;
-
-            double mz = (v1.values[1] - v3.values[1]) / (v1.values[2] - v3.values[2]);
-            double bz = v1.values[1] - v1.values[2] * mz;
+            double Ys = v2.values[1];
             double Zs = 0;
-            if (Math.Abs(mz) < eps)
-                Zs = v1.values[2];
+
+            if (Math.Abs(v1.values[0] - v3.values[0]) < eps)
+            {
+                Xs = v1.values[0];
+            }
             else
+            {
+                double m = (v1.values[1] - v3.values[1]) / (v1.values[0] - v3.values[0]);
+                double b = v1.values[1] - v1.values[0] * m;
+                Xs = (Ys - b) / m;
+            }
+            
+            if (Math.Abs(v1.values[2] - v3.values[2]) < eps)
+            {
+                Zs = v1.values[2];
+            }
+            else
+            {
+                double mz = (v1.values[1] - v3.values[1]) / (v1.values[2] - v3.values[2]);
+                double bz = v1.values[1] - v1.values[2] * mz;
                 Zs = (Ys - bz) / mz;
+            }
 
             Vector4D VS = new Vector4D(Xs, Ys, Zs, 1);
 
@@ -228,9 +245,9 @@ namespace lab4
             double diff = dist2 / dist1;
 
             // interpolate normal vector in the S point
-            Vector3D wcS = new Vector3D(ws1.X * (1-diff) + ws3.X * (diff), ws1.Y * (1-diff) + ws3.Y * (diff), ws1.Z * (1 - diff) + ws3.Z * diff);
+            Vector3D wcS = new Vector3D(ws1.X * (1 - diff) + ws3.X * (diff), ws1.Y * (1 - diff) + ws3.Y * (diff), ws1.Z * (1 - diff) + ws3.Z * diff);
             Vector3D vnS = new Vector3D(vn1.values[0] * (1 - diff) + vn3.values[0] * diff, vn1.values[1] * (1 - diff) + vn3.values[1] * diff, vn1.values[2] * (1 - diff) + vn3.values[2] * diff);
-            
+
             var vnS4 = Vector4D.CreatePositionVector(vnS);
 
             // ensure to create CW oriented triangles
@@ -260,6 +277,8 @@ namespace lab4
             foreach (var v in vertices)
             {
                 v.TransformToScreenVectorScale(w, h);
+                var a = v.values[0];
+                var b = v.values[1];
             }
         }
 

@@ -42,10 +42,10 @@ namespace lab4
             listBox2.Items.Add(activeCamera);
             checkBox1.Checked = true;
             checkBox2.Checked = true;
-            Draw();
+            RenderScene();
         }
 
-        void Draw()
+        void RenderScene()
         {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
@@ -218,7 +218,7 @@ namespace lab4
             this.pictureBox1.Image = bmp;
             if(!isInitialRun)
             {
-                Draw();
+                RenderScene();
                 isInitialRun = false;
             }
         }
@@ -248,13 +248,13 @@ namespace lab4
                     if (movementCounterX < 0)
                     {
                         activeCamera.MoveTarget(change, 0, 0);
-                        Draw();
+                        RenderScene();
                     }
 
                     else
                     {
                         activeCamera.MoveTarget(-change, 0, 0);
-                        Draw();
+                        RenderScene();
                     }
                     movementCounterX = 0;
                     movementCounterY = 0;
@@ -272,12 +272,12 @@ namespace lab4
                     if (movementCounterY > 0)
                     {
                         activeCamera.MoveTarget(0, change, 0);
-                        Draw();
+                        RenderScene();
                     }
                     else
                     {
                         activeCamera.MoveTarget(0, -change, 0);
-                        Draw();
+                        RenderScene();
                     }
                     movementCounterX = 0;
                     movementCounterY = 0;
@@ -308,25 +308,25 @@ namespace lab4
             activeObject = null;
             objects.Add(new Box(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
             listBox1.Items.Add(objects[objects.Count - 1]);
-            Draw();
+            RenderScene();
         }
         public void AddSphere(object sender, EventArgs args)
         {
             objects.Add(new Sphere(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
             listBox1.Items.Add(objects[objects.Count - 1]);
-            Draw();
+            RenderScene();
         }
         public void AddCone(object sender, EventArgs args)
         {
             objects.Add(new Cone(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
             listBox1.Items.Add(objects[objects.Count - 1]);
-            Draw();
+            RenderScene();
         }
         public void AddCylinder(object sender, EventArgs args)
         {
             objects.Add(new Cylinder(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
             listBox1.Items.Add(objects[objects.Count - 1]);
-            Draw();
+            RenderScene();
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -411,7 +411,7 @@ namespace lab4
             if (double.TryParse(textBox7.Text, out sx) && double.TryParse(textBox8.Text, out sy) && double.TryParse(textBox9.Text, out sz))
                 activeObject.Scale(sx, sy, sz);
 
-            Draw();
+            RenderScene();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -428,7 +428,7 @@ namespace lab4
             activeObject = null;
             objects.Clear();
             listBox1.Items.Clear();
-            Draw();
+            RenderScene();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -442,7 +442,7 @@ namespace lab4
             foreach (var o in objects)
                 listBox1.Items.Add(o);
             stream.Close();
-            Draw();
+            RenderScene();
         }
 
         // Light tab
@@ -457,7 +457,7 @@ namespace lab4
             textBox15.Text = activeCamera.target.Y.ToString("0.0");
             textBox16.Text = activeCamera.target.Z.ToString("0.0");
             textBox21.Text = activeCamera.fov.ToString();
-            Draw();
+            RenderScene();
         }
 
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
@@ -489,7 +489,7 @@ namespace lab4
                 activeCamera = cameras[cameras.Count - 1];
             }
 
-            Draw();
+            RenderScene();
             System.Diagnostics.Debug.WriteLine("");
         }
 
@@ -506,14 +506,14 @@ namespace lab4
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             displayMesh = checkBox1.Checked;
-            Draw();
+            RenderScene();
         }
 
         // backface culling 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             backfaceCulling = checkBox2.Checked;
-            Draw();
+            RenderScene();
         }
 
         // clear

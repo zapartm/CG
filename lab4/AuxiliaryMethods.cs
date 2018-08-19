@@ -71,7 +71,7 @@ namespace lab4
                     double currz1 = z1;
                     double currz2 = z1;
 
-                    if (Math.Abs(y1 - y2) < 1.0)
+                    if (Math.Abs(y1 - y2) < 1)
                     {
                         double d = Math.Abs(currx1 - currx2);
                         for (int i = (int)x2; i <= x3; i++)
