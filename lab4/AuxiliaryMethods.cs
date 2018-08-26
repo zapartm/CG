@@ -270,7 +270,16 @@ namespace lab4
             M2[1, 3] = -position.Y;
             M2[2, 3] = -position.Z;
             return M * M2;
-        }
+        } 
 
+        public static Vector3D CreateNormalVectorToSurface(Vector3D p1, Vector3D p2, Vector3D p3)
+        {
+            var vector = new Vector3D();
+            var v1 = new Vector3D(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
+            var v2 = new Vector3D(p3.X - p1.X, p3.Y - p1.Y, p3.Z - p1.Z);
+            vector = Vector3D.CrossProduct(v2, v1);
+            vector.Normalize();
+            return vector;
+        }
     }
 }

@@ -148,7 +148,6 @@ namespace lab4
                                 currentLine[x] = (byte)pixelColors[i, j].Value.B;
                                 currentLine[x + 1] = (byte)pixelColors[i, j].Value.G;
                                 currentLine[x + 2] = (byte)pixelColors[i, j].Value.R;
-                                
                                 //currentLine[x] = (byte)(255 - 255 * (zbuff[i, j] - min) / (max - min));
                                 //currentLine[x+1] = (byte)(255 - 255 * (zbuff[i, j] - min) / (max - min));
                                 //currentLine[x+2] = (byte)(255 - 255 * (zbuff[i, j] - min) / (max - min));
@@ -160,11 +159,11 @@ namespace lab4
                 }
 
                 //normals preview
-                //foreach (var tup in dupa)
-                //{
-                //    Pen p = Pens.White;
-                //    g.DrawLine(p, Get2DPointWithScaling(tup.Item1), Get2DPointWithScaling(tup.Item2));
-                //}
+                foreach (var tup in dupa)
+                {
+                    Pen p = Pens.White;
+                    g.DrawLine(p, Get2DPointWithScaling(tup.Item1), Get2DPointWithScaling(tup.Item2));
+                }
 
                 if (displayMesh)
                 {

@@ -22,8 +22,8 @@ namespace lab4
         {
             this.Color = color;
             points = new List<Vector3D>();
-            M = 15;
-            N = 15;
+            M = 30;
+            N = 30;
             R = 1;
 
             points.Add(new Vector3D(0, R, 0));
