@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using static lab4.MainForm;
 
 namespace lab4
 {
@@ -16,6 +17,13 @@ namespace lab4
         protected int id;
         protected int idUnique;
 
+        private PrimitiveType primitiveType;
+        public new virtual PrimitiveType GetType
+        {
+            get { return primitiveType; }
+            protected set { primitiveType = value; }
+        }
+
         // original vertices position for object and its normals
         private List<Vector3D> pointsOriginal;
         private List<Vector3D> pointsForNormalsOriginal;
@@ -23,7 +31,7 @@ namespace lab4
         // current vertices position = original vertices + TRS matrices
         protected List<Vector3D> points;
         protected List<Vector3D> pointsForNormals;
-        
+
         // currently applied transformations
         private Matrix4x4 translationMatrix;
         private Matrix4x4 rotationMatrix;
@@ -71,6 +79,7 @@ namespace lab4
         {
             //Get the values from info and assign them to the appropriate properties
             points = (List<Vector3D>)info.GetValue("points", typeof(List<Vector3D>));
+            pointsForNormals = (List<Vector3D>)info.GetValue("pointsForNormals", typeof(List<Vector3D>));
             translationMatrix = (Matrix4x4)info.GetValue("translationMatrix", typeof(Matrix4x4));
             rotationMatrix = (Matrix4x4)info.GetValue("rotationMatrix", typeof(Matrix4x4));
             scaleMatrix = (Matrix4x4)info.GetValue("scaleMatrix", typeof(Matrix4x4));
@@ -91,6 +100,7 @@ namespace lab4
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("points", pointsOriginal);
+            info.AddValue("pointsForNormals", pointsForNormalsOriginal);
             info.AddValue("translationMatrix", translationMatrix);
             info.AddValue("rotationMatrix", rotationMatrix);
             info.AddValue("scaleMatrix", scaleMatrix);
@@ -110,9 +120,15 @@ namespace lab4
         public void SaveOriginalState()
         {
             pointsOriginal = new List<Vector3D>();
-            pointsOriginal.AddRange(points);
+            if(points != null)
+            {
+                pointsOriginal.AddRange(points);
+            }
             pointsForNormalsOriginal = new List<Vector3D>();
-            pointsForNormalsOriginal.AddRange(pointsForNormals);
+            if (pointsForNormals != null)
+            {
+                pointsForNormalsOriginal.AddRange(pointsForNormals);
+            }
         }
 
 
@@ -159,7 +175,7 @@ namespace lab4
             double ay = Math.PI * y / 180.0;
             double az = Math.PI * z / 180.0;
 
-            if(x != 0)
+            if (x != 0)
             {
                 Mmod[1, 1] = Math.Cos(ax);
                 Mmod[1, 2] = -Math.Sin(ax);
@@ -167,7 +183,7 @@ namespace lab4
                 Mmod[2, 2] = Math.Cos(ax);
             }
 
-            if(y != 0)
+            if (y != 0)
             {
                 Mmod[0, 0] = Math.Cos(ay);
                 Mmod[2, 0] = -Math.Sin(ay);
@@ -175,7 +191,7 @@ namespace lab4
                 Mmod[2, 2] = Math.Cos(ay);
             }
 
-            if(z != 0)
+            if (z != 0)
             {
                 Mmod[0, 0] = Math.Cos(az);
                 Mmod[0, 1] = -Math.Sin(az);

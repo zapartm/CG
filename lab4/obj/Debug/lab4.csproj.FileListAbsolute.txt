@@ -2,9 +2,14 @@ C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-mast
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\bin\Debug\lab4.exe
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\bin\Debug\lab4.pdb
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.csprojAssemblyReference.cache
-C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.Form1.resources
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.Properties.Resources.resources
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.csproj.GenerateResource.cache
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.csproj.CoreCompileInputs.cache
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.exe
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.pdb
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.OptionsForm.resources
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.BaseControl.resources
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.BoxControl.resources
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.MainForm.resources
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.ConeCylinderControl.resources
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.SphereControl.resources

@@ -11,7 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace lab4
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         Bitmap bmp;
         readonly Color BackgroundColor = System.Drawing.Color.FromArgb(30, 30, 30);
@@ -21,15 +21,20 @@ namespace lab4
         List<Camera> cameras;
         Primitive activeObject;
         Camera activeCamera;
+        Settings settings = Settings.GetInstance();
 
-        public Form1()
+        private BoxControl boxControl = new BoxControl();
+        private SphereControl sphereControl = new SphereControl();
+        private ConeCylinderControl coneCylinderControl = new ConeCylinderControl();
+
+        public MainForm()
         {
             InitializeComponent();
             ContextMenu cm = new ContextMenu();
-            cm.MenuItems.Add("Add Box", new EventHandler(AddBox));
-            cm.MenuItems.Add("Add Sphere", new EventHandler(AddSphere));
-            cm.MenuItems.Add("Add Cone", new EventHandler(AddCone));
-            cm.MenuItems.Add("Add Cylinder", new EventHandler(AddCylinder));
+            cm.MenuItems.Add("Add Box", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Box)));
+            cm.MenuItems.Add("Add Sphere", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Sphere)));
+            cm.MenuItems.Add("Add Cone", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Cone)));
+            cm.MenuItems.Add("Add Cylinder", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Cylinder)));
             listBox1.ContextMenu = cm;
 
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -40,8 +45,7 @@ namespace lab4
             pm = new PhongModel(0, 4, 4);
             cameras.Add(activeCamera);
             listBox2.Items.Add(activeCamera);
-            checkBox1.Checked = true;
-            checkBox2.Checked = true;
+
             RenderScene();
         }
 
@@ -51,36 +55,24 @@ namespace lab4
             stopwatch.Start();
 
             List<Triangle> triangles = new List<Triangle>();
-            if(objects != null)
+            if (objects != null)
+            {
                 foreach (var v in objects)
+                {
                     triangles.AddRange(v.GetTriangles());
+                }
+            }
 
             Matrix4x4 viewMatrix = AuxiliaryMethods.CreateViewMatrix(activeCamera.position, activeCamera.target, new Vector3D(0, 1, 0));
             Matrix4x4 projectionMatrix = AuxiliaryMethods.CreateProjectionMatrix(activeCamera.fov, 1, 10, pictureBox1.Width, pictureBox1.Height);
             Matrix4x4 PVM = projectionMatrix * viewMatrix;
 
-            #region axis 
+            #region show axis 
             Vector4D center = new Vector4D(0, 0, 0, 1);
             Tuple<Vector4D, Vector4D, Vector4D> axis = new Tuple<Vector4D, Vector4D, Vector4D>(new Vector4D(3, 0, 0, 1), new Vector4D(0, 3, 0, 1), new Vector4D(0, 0, 3, 1));
             axis = new Tuple<Vector4D, Vector4D, Vector4D>(PVM * axis.Item1, PVM * axis.Item2, PVM * axis.Item3);
             center = PVM * center;
             #endregion
-
-            var dupa = new List<Tuple<Vector4D, Vector4D>>();
-            foreach (var o in objects)
-            {
-                foreach(var t in o.GetTriangles())
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        dupa.Add(new Tuple<Vector4D, Vector4D>(t.vertices[i], t.normalVectors[i]));
-                    }
-                }
-            }
-            for (int i = 0; i < dupa.Count; i++)
-            {
-                dupa[i] = new Tuple<Vector4D, Vector4D>(PVM * dupa[i].Item1, PVM * dupa[i].Item2);
-            }
 
             int n = triangles.Count;
             for (int i = 0; i < n; i++)
@@ -91,24 +83,29 @@ namespace lab4
             }
 
             // backface culling
-            if (backfaceCulling)
+            if (settings.BackfaceCulling)
+            {
                 triangles.RemoveAll(t => { return !checkIsClockWise(t); });
+            }
 
-            int w = pictureBox1.Width;
-            int h = pictureBox1.Height;
+            int VIEWPORT_WIDTH = pictureBox1.Width;
+            int VIEWPORT_HEIGHT = pictureBox1.Height;
             for (int i = 0; i < triangles.Count; i++)
-                triangles[i].TransformToScreen(pictureBox1.Width, pictureBox1.Height);
+            {
+                triangles[i].TransformToScreen(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+            }
+
             // remove all triangles that are entirely outside the viewport
             triangles.RemoveAll(t =>
             {
                 return (t.vertices[0].values[0] < 0 && t.vertices[1].values[0] < 0 && t.vertices[2].values[0] < 0) ||
-                       (t.vertices[0].values[0] > w && t.vertices[1].values[0] > w && t.vertices[2].values[0] > w) ||
+                       (t.vertices[0].values[0] > VIEWPORT_WIDTH && t.vertices[1].values[0] > VIEWPORT_WIDTH && t.vertices[2].values[0] > VIEWPORT_WIDTH) ||
                        (t.vertices[0].values[1] < 0 && t.vertices[1].values[1] < 0 && t.vertices[2].values[1] < 0) ||
-                       (t.vertices[0].values[1] > h && t.vertices[1].values[1] > h && t.vertices[2].values[1] > h);
+                       (t.vertices[0].values[1] > VIEWPORT_HEIGHT && t.vertices[1].values[1] > VIEWPORT_HEIGHT && t.vertices[2].values[1] > VIEWPORT_HEIGHT);
             });
 
             Color?[,] pixelColors;
-            double[,] zbuff = AuxiliaryMethods.CreateZbufferArray2(triangles, out pixelColors, pictureBox1.Height, pictureBox1.Width, pm, activeCamera);
+            double[,] zbuff = AuxiliaryMethods.CreateZbufferArray(triangles, out pixelColors, pictureBox1.Height, pictureBox1.Width, pm, activeCamera);
 
             double min = 2, max = -1;
             for (int i = 0; i < zbuff.GetLength(0); i++)
@@ -121,7 +118,7 @@ namespace lab4
                         max = zbuff[i, j];
                 }
             }
-            
+
             using (Graphics g = Graphics.FromImage(pictureBox1.Image))
             {
                 g.Clear(BackgroundColor);
@@ -148,9 +145,6 @@ namespace lab4
                                 currentLine[x] = (byte)pixelColors[i, j].Value.B;
                                 currentLine[x + 1] = (byte)pixelColors[i, j].Value.G;
                                 currentLine[x + 2] = (byte)pixelColors[i, j].Value.R;
-                                //currentLine[x] = (byte)(255 - 255 * (zbuff[i, j] - min) / (max - min));
-                                //currentLine[x+1] = (byte)(255 - 255 * (zbuff[i, j] - min) / (max - min));
-                                //currentLine[x+2] = (byte)(255 - 255 * (zbuff[i, j] - min) / (max - min));
                             }
                         }
                     }
@@ -158,14 +152,35 @@ namespace lab4
                     bmp.UnlockBits(bitmapData);
                 }
 
-                //normals preview
-                foreach (var tup in dupa)
+                #region  normals preview
+                if (settings.ShowNormals)
                 {
-                    Pen p = Pens.White;
-                    g.DrawLine(p, Get2DPointWithScaling(tup.Item1), Get2DPointWithScaling(tup.Item2));
-                }
+                    var normalVectors = new List<Tuple<Vector4D, Vector4D>>();
+                    foreach (var o in objects)
+                    {
+                        foreach (var t in o.GetTriangles())
+                        {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                normalVectors.Add(new Tuple<Vector4D, Vector4D>(t.vertices[i], t.normalVectors[i]));
+                            }
+                        }
+                    }
+                    for (int i = 0; i < normalVectors.Count; i++)
+                    {
+                        normalVectors[i] = new Tuple<Vector4D, Vector4D>(PVM * normalVectors[i].Item1, PVM * normalVectors[i].Item2);
+                    }
 
-                if (displayMesh)
+                    foreach (var tup in normalVectors)
+                    {
+                        Pen p = Pens.White;
+                        g.DrawLine(p, Get2DPointWithScaling(tup.Item1), Get2DPointWithScaling(tup.Item2));
+                    }
+                }
+                #endregion
+
+                #region show mesh
+                if (settings.ShowMesh)
                 {
                     Pen p = Pens.White;
                     foreach (var v in triangles)
@@ -175,6 +190,8 @@ namespace lab4
                         g.DrawLine(p, Get2DPoint(v.vertices[2]), Get2DPoint(v.vertices[0]));
                     }
                 }
+                #endregion
+
             }
 
             pictureBox1.Refresh();
@@ -213,7 +230,7 @@ namespace lab4
         {
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             this.pictureBox1.Image = bmp;
-            if(!isInitialRun)
+            if (!isInitialRun)
             {
                 RenderScene();
                 isInitialRun = false;
@@ -299,28 +316,32 @@ namespace lab4
             }
         }
 
-        public void AddBox(object sender, EventArgs args)
+        public enum PrimitiveType
+        {
+            Box, Sphere, Cone, Cylinder
+        };
+
+        public void AddPrimitive(PrimitiveType type)
         {
             activeObject = null;
-            objects.Add(new Box(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
-            listBox1.Items.Add(objects[objects.Count - 1]);
-            RenderScene();
-        }
-        public void AddSphere(object sender, EventArgs args)
-        {
-            objects.Add(new Sphere(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
-            listBox1.Items.Add(objects[objects.Count - 1]);
-            RenderScene();
-        }
-        public void AddCone(object sender, EventArgs args)
-        {
-            objects.Add(new Cone(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
-            listBox1.Items.Add(objects[objects.Count - 1]);
-            RenderScene();
-        }
-        public void AddCylinder(object sender, EventArgs args)
-        {
-            objects.Add(new Cylinder(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]));
+            Primitive primitive = null;
+            switch (type)
+            {
+                case PrimitiveType.Box:
+                    primitive = new Box(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
+                    break;
+                case PrimitiveType.Cone:
+                    primitive = new Cone(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
+                    break;
+                case PrimitiveType.Cylinder:
+                    primitive = new Cylinder(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
+                    break;
+                case PrimitiveType.Sphere:
+                    primitive = new Sphere(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
+                    break;
+            }
+
+            objects.Add(primitive);
             listBox1.Items.Add(objects[objects.Count - 1]);
             RenderScene();
         }
@@ -330,6 +351,7 @@ namespace lab4
             activeObject = listBox1.SelectedItem as Primitive;
             if (activeObject == null) return;
 
+            this.SuspendLayout();
             textBox1.Text = activeObject.translationX.ToString("0.0");
             textBox2.Text = activeObject.translationY.ToString("0.0");
             textBox3.Text = activeObject.translationZ.ToString("0.0");
@@ -342,56 +364,33 @@ namespace lab4
             textBox8.Text = activeObject.ScaleY.ToString("0.0");
             textBox9.Text = activeObject.ScaleZ.ToString("0.0");
 
-            if (activeObject is Cone)
+            this.panel3.Controls.Clear();
+            var type = activeObject.GetType;
+            switch (type)
             {
-                var ob = activeObject as Cone;
-                if (ob == null) return;
-                textBox19.Enabled = false;
-                textBox17.Enabled = true;
-                textBox17.Text = ob.Radius.ToString("0.0");
-                textBox18.Enabled = true;
-                textBox18.Text = ob.N.ToString();
-                textBox20.Enabled = true;
-                textBox20.Text = ob.Height.ToString("0.0");
+                case PrimitiveType.Box:
+                    this.panel3.Controls.Add(boxControl);
+                    break;
+                case PrimitiveType.Sphere:
+                    this.panel3.Controls.Add(sphereControl);
+                    break;
+                case PrimitiveType.Cone:
+                    coneCylinderControl.SetControlName(PrimitiveType.Cone);
+                    this.panel3.Controls.Add(coneCylinderControl);
+                    break;
+                case PrimitiveType.Cylinder:
+                    coneCylinderControl.SetControlName(PrimitiveType.Cylinder);
+                    this.panel3.Controls.Add(coneCylinderControl);
+                    break;
+                default:
+                    throw new ApplicationException("Unknown primitive type");
             }
-            else if (activeObject is Sphere)
-            {
-                var ob = activeObject as Sphere;
-                if (ob == null) return;
-
-                textBox19.Enabled = true;
-                textBox19.Text = ob.M.ToString();
-                textBox17.Enabled = true;
-                textBox17.Text = ob.R.ToString("0.0");
-                textBox18.Enabled = true;
-                textBox18.Text = ob.N.ToString();
-                textBox20.Enabled = false;
-            }
-            else if (activeObject is Cylinder)
-            {
-                var ob = activeObject as Cone;
-                if (ob == null) return;
-                textBox19.Enabled = false;
-                textBox17.Enabled = true;
-                textBox17.Text = ob.Radius.ToString("0.0");
-                textBox18.Enabled = true;
-                textBox18.Text = ob.N.ToString();
-                textBox20.Enabled = true;
-                textBox20.Text = ob.Height.ToString("0.0");
-            }
-            else if (activeObject is Box)
-            {
-                var ob = activeObject as Cone;
-                if (ob == null) return;
-                textBox19.Enabled = false;
-                textBox17.Enabled = false;
-                textBox18.Enabled = false;
-                textBox20.Enabled = false;
-            }
+            //this.panel3.Refresh();
+            this.ResumeLayout(false);
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private void applyTRS_click(object sender, EventArgs e)
         {
             if (activeObject == null) return;
 
@@ -446,13 +445,13 @@ namespace lab4
         {
             if (activeCamera == null) return;
             activeCamera = listBox2.SelectedItem as Camera;
-            textBox11.Text = activeCamera.position.X.ToString("0.0");
-            textBox12.Text = activeCamera.position.Y.ToString("0.0");
-            textBox13.Text = activeCamera.position.Z.ToString("0.0"); ;
-            textBox14.Text = activeCamera.target.X.ToString("0.0");
-            textBox15.Text = activeCamera.target.Y.ToString("0.0");
-            textBox16.Text = activeCamera.target.Z.ToString("0.0");
-            textBox21.Text = activeCamera.fov.ToString();
+            //textBox11.Text = activeCamera.position.X.ToString("0.0");
+            //textBox12.Text = activeCamera.position.Y.ToString("0.0");
+            //textBox13.Text = activeCamera.position.Z.ToString("0.0"); ;
+            //textBox14.Text = activeCamera.target.X.ToString("0.0");
+            //textBox15.Text = activeCamera.target.Y.ToString("0.0");
+            //textBox16.Text = activeCamera.target.Z.ToString("0.0");
+            //textBox21.Text = activeCamera.fov.ToString();
             RenderScene();
         }
 
@@ -467,49 +466,26 @@ namespace lab4
         PhongModel pm;
         private void button2_Click(object sender, EventArgs e)
         {
-            double px, py, pz, tx, ty, tz;
-            int fov;
+            //double px, py, pz, tx, ty, tz;
+            //int fov;
 
-            if (double.TryParse(textBox11.Text, out px) && double.TryParse(textBox12.Text, out py) && double.TryParse(textBox13.Text, out pz))
-            {
-                pm = new PhongModel(px, py, pz);
-            }
-
-
-            if (double.TryParse(textBox11.Text, out px) && double.TryParse(textBox12.Text, out py) && double.TryParse(textBox13.Text, out pz) &&
-                double.TryParse(textBox14.Text, out tx) && double.TryParse(textBox15.Text, out ty) && double.TryParse(textBox16.Text, out tz) &&
-                int.TryParse(textBox21.Text, out fov))
-            {
-                cameras.Remove(activeCamera);
-                cameras.Add(new Camera(new Vector3D(px, py, pz), new Vector3D(tx, ty, tz), fov));
-                activeCamera = cameras[cameras.Count - 1];
-            }
-
-            RenderScene();
-            System.Diagnostics.Debug.WriteLine("");
-        }
+            //if (double.TryParse(textBox11.Text, out px) && double.TryParse(textBox12.Text, out py) && double.TryParse(textBox13.Text, out pz))
+            //{
+            //    pm = new PhongModel(px, py, pz);
+            //}
 
 
-        private void button3_Click(object sender, EventArgs e)
-        {
+            //if (double.TryParse(textBox11.Text, out px) && double.TryParse(textBox12.Text, out py) && double.TryParse(textBox13.Text, out pz) &&
+            //    double.TryParse(textBox14.Text, out tx) && double.TryParse(textBox15.Text, out ty) && double.TryParse(textBox16.Text, out tz) &&
+            //    int.TryParse(textBox21.Text, out fov))
+            //{
+            //    cameras.Remove(activeCamera);
+            //    cameras.Add(new Camera(new Vector3D(px, py, pz), new Vector3D(tx, ty, tz), fov));
+            //    activeCamera = cameras[cameras.Count - 1];
+            //}
 
-        }
-
-        bool displayMesh = true;
-        bool backfaceCulling = true;
-
-        // show mesh
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            displayMesh = checkBox1.Checked;
-            RenderScene();
-        }
-
-        // backface culling 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            backfaceCulling = checkBox2.Checked;
-            RenderScene();
+            //RenderScene();
+            //System.Diagnostics.Debug.WriteLine("");
         }
 
         // clear
@@ -517,5 +493,12 @@ namespace lab4
         {
             Clear();
         }
+
+        private void optionsButton_Click(object sender, EventArgs e)
+        {
+            var form = new OptionsForm(settings, RenderScene);
+            form.Show();
+        }
+
     }
 }

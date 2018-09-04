@@ -7,6 +7,7 @@ using System.Windows.Media.Media3D;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using static lab4.MainForm;
 
 namespace lab4
 {
@@ -21,6 +22,8 @@ namespace lab4
         public Sphere(Color color) : base()
         {
             this.Color = color;
+            base.GetType = PrimitiveType.Sphere;
+
             points = new List<Vector3D>();
             M = 30;
             N = 30;

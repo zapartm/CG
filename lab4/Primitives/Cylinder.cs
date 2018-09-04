@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Media.Media3D;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using static lab4.MainForm;
 
 namespace lab4
 {
@@ -17,10 +18,12 @@ namespace lab4
         public double Height;
         public int N;
         private static int counter = 0;
+
         public Cylinder(Color color) : base()
         {
-            //base.child = this as Cylinder;
             base.Color = color;
+            base.GetType = PrimitiveType.Cylinder;
+
             N = 12;
             Radius = 1;
             Height = 1;

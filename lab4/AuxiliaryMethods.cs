@@ -36,7 +36,7 @@ namespace lab4
     static class AuxiliaryMethods
     {
 
-        public static double[,] CreateZbufferArray2(List<Triangle> li, out Color?[,] colors, int h, int w, PhongModel PM, Camera c)
+        public static double[,] CreateZbufferArray(List<Triangle> li, out Color?[,] colors, int h, int w, PhongModel PM, Camera c)
         {
             colors = new Color?[h, w];
             double[,] result = new double[h, w];

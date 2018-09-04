@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using static lab4.MainForm;
 
 namespace lab4
 {
@@ -15,11 +16,14 @@ namespace lab4
     class Box : Primitive, ISerializable
     {
         private static int counter = 0;
+
         public Box(Color color) : base()
         {
             points = new List<Vector3D>();
             pointsForNormals = new List<Vector3D>();
             this.Color = color;
+            base.GetType = PrimitiveType.Box;
+
             points.Add(new Vector3D(-0.5, 0, -0.5));
             points.Add(new Vector3D(0.5, 0, -0.5));
             points.Add(new Vector3D(0.5, 1, -0.5));

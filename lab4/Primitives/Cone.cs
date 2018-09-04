@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Media.Media3D;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using static lab4.MainForm;
 
 namespace lab4
 
@@ -22,6 +23,8 @@ namespace lab4
         public Cone(Color color) : base()
         {
             base.Color = color;
+            base.GetType = PrimitiveType.Cone;
+
             N = 3;
             Radius = 1;
             Height = 2;
