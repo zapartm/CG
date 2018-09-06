@@ -8,6 +8,7 @@ using System.Windows.Media.Media3D;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
+using lab4.Primitives;
 
 namespace lab4
 {
@@ -16,7 +17,7 @@ namespace lab4
     {
         public double Radius;
         public double Height;
-        public int N;
+        public int Segments;
         private static int counter = 0;
 
         public Cylinder(Color color) : base()
@@ -24,21 +25,21 @@ namespace lab4
             base.Color = color;
             base.GetType = PrimitiveType.Cylinder;
 
-            N = 12;
+            Segments = 12;
             Radius = 1;
             Height = 1;
             points = new List<Vector3D>();
             pointsForNormals = new List<Vector3D>();
             var tmp = new List<Vector3D>();
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Segments; i++)
             {
-                points.Add(new Vector3D(Radius * Math.Sin(Math.PI * 2 * i / N), 0, Radius * Math.Cos(Math.PI * 2 * i / N)));
-                pointsForNormals.Add(new Vector3D((Radius + 1) * Math.Sin(Math.PI * 2 * i / N), 0, (Radius + 1) * Math.Cos(Math.PI * 2 * i / N)));
-                tmp.Add(new Vector3D((Radius) * Math.Sin(Math.PI * 2 * i / N), -1, (Radius) * Math.Cos(Math.PI * 2 * i / N)));
+                points.Add(new Vector3D(Radius * Math.Sin(Math.PI * 2 * i / Segments), 0, Radius * Math.Cos(Math.PI * 2 * i / Segments)));
+                pointsForNormals.Add(new Vector3D((Radius + 1) * Math.Sin(Math.PI * 2 * i / Segments), 0, (Radius + 1) * Math.Cos(Math.PI * 2 * i / Segments)));
+                tmp.Add(new Vector3D((Radius) * Math.Sin(Math.PI * 2 * i / Segments), -1, (Radius) * Math.Cos(Math.PI * 2 * i / Segments)));
 
-                points.Add(new Vector3D(Radius * Math.Sin(Math.PI * 2 * i / N), Height , Radius * Math.Cos(Math.PI * 2 * i / N)));
-                pointsForNormals.Add(new Vector3D((Radius+1) * Math.Sin(Math.PI * 2 * i / N), Height, (Radius + 1) * Math.Cos(Math.PI * 2 * i / N)));
-                tmp.Add(new Vector3D((Radius) * Math.Sin(Math.PI * 2 * i / N), Height+1, (Radius) * Math.Cos(Math.PI * 2 * i / N)));
+                points.Add(new Vector3D(Radius * Math.Sin(Math.PI * 2 * i / Segments), Height , Radius * Math.Cos(Math.PI * 2 * i / Segments)));
+                pointsForNormals.Add(new Vector3D((Radius+1) * Math.Sin(Math.PI * 2 * i / Segments), Height, (Radius + 1) * Math.Cos(Math.PI * 2 * i / Segments)));
+                tmp.Add(new Vector3D((Radius) * Math.Sin(Math.PI * 2 * i / Segments), Height+1, (Radius) * Math.Cos(Math.PI * 2 * i / Segments)));
             }
             pointsForNormals.AddRange(tmp);
             points.Add(new Vector3D(0, 0, 0));
@@ -49,9 +50,10 @@ namespace lab4
             base.SaveOriginalState();
         }
 
+        #region serialization
         public Cylinder(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            N = (int)info.GetValue("N", typeof(int));
+            Segments = (int)info.GetValue("N", typeof(int));
             Radius = (double)info.GetValue("R", typeof(double));
             Height = (double)info.GetValue("H", typeof(double));
         }
@@ -59,10 +61,11 @@ namespace lab4
         public new void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("N", N);
+            info.AddValue("N", Segments);
             info.AddValue("R", Radius);
             info.AddValue("H", Height);
         }
+        #endregion
 
         public override List<Triangle> GetTriangles()
         {
@@ -70,9 +73,9 @@ namespace lab4
             List<Triangle> result = new List<Triangle>();
             int n1 = pointsForNormals.Count;
             int n = points.Count - 2;
-            var tmpList = pointsForNormals.GetRange(2 * N, pointsForNormals.Count - 2 * N);
+            var tmpList = pointsForNormals.GetRange(2 * Segments, pointsForNormals.Count - 2 * Segments);
 
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < Segments; i++)
             {
                 Vector3D p1, p2, p3, pn1, pn2, pn3;
                 // side top-flat triangles
@@ -118,6 +121,42 @@ namespace lab4
         public override string ToString()
         {
             return "Cylinder " + counter;
+        }
+
+        public override void ApplyProperties(PrimitiveProperties properties)
+        {
+            points = new List<Vector3D>();
+            pointsForNormals = new List<Vector3D>();
+            var tmp = new List<Vector3D>();
+            for (int i = 0; i < Segments; i++)
+            {
+                points.Add(new Vector3D(Radius * Math.Sin(Math.PI * 2 * i / Segments), 0, Radius * Math.Cos(Math.PI * 2 * i / Segments)));
+                pointsForNormals.Add(new Vector3D((Radius + 1) * Math.Sin(Math.PI * 2 * i / Segments), 0, (Radius + 1) * Math.Cos(Math.PI * 2 * i / Segments)));
+                tmp.Add(new Vector3D((Radius) * Math.Sin(Math.PI * 2 * i / Segments), -1, (Radius) * Math.Cos(Math.PI * 2 * i / Segments)));
+
+                points.Add(new Vector3D(Radius * Math.Sin(Math.PI * 2 * i / Segments), Height, Radius * Math.Cos(Math.PI * 2 * i / Segments)));
+                pointsForNormals.Add(new Vector3D((Radius + 1) * Math.Sin(Math.PI * 2 * i / Segments), Height, (Radius + 1) * Math.Cos(Math.PI * 2 * i / Segments)));
+                tmp.Add(new Vector3D((Radius) * Math.Sin(Math.PI * 2 * i / Segments), Height + 1, (Radius) * Math.Cos(Math.PI * 2 * i / Segments)));
+            }
+            pointsForNormals.AddRange(tmp);
+            points.Add(new Vector3D(0, 0, 0));
+            pointsForNormals.Add(new Vector3D(0, -1, 0));
+            points.Add(new Vector3D(0, Height, 0));
+            pointsForNormals.Add(new Vector3D(0, Height + 1, 0));
+
+            base.SaveOriginalState();
+            ResetScale();
+            ApplyTrasformations();
+        }
+
+        public override PrimitiveProperties CreateProperties()
+        {
+            return new PrimitiveProperties
+            {
+                radius = this.Radius,
+                height = this.Height,
+                segments = this.Segments
+            };
         }
     }
 }

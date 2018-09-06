@@ -8,15 +8,16 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
+using lab4.Primitives;
 
 namespace lab4
 {
     [Serializable]
     class Sphere : Primitive, ISerializable
     {
-        public int M; // number of horizontal slices (latitude)
-        public int N; // number of vertical slices (longtitude)
-        public double R; // radius
+        public int HorizontalSegments; // number of horizontal slices (latitude)
+        public int VerticalSegments; // number of vertical slices (longtitude)
+        public double Radius; // radius
         private static int counter = 0;
 
         public Sphere(Color color) : base()
@@ -24,47 +25,47 @@ namespace lab4
             this.Color = color;
             base.GetType = PrimitiveType.Sphere;
 
-            points = new List<Vector3D>();
-            M = 30;
-            N = 30;
-            R = 1;
+            HorizontalSegments = 30;
+            VerticalSegments = 30;
+            Radius = 1;
 
-            points.Add(new Vector3D(0, R, 0));
+            points = new List<Vector3D>();
             pointsForNormals = new List<Vector3D>();
-            pointsForNormals.Add(new Vector3D(0, R + 1, 0));
-            for (int i = 1; i < M - 1; i++)
+            points.Add(new Vector3D(0, Radius, 0));
+            pointsForNormals.Add(new Vector3D(0, Radius + 1, 0));
+            for (int i = 1; i < HorizontalSegments - 1; i++)
             {
-                for (int j = 0; j < N; j++)
+                for (int j = 0; j < VerticalSegments; j++)
                 {
-                    double x = R * Math.Cos(2 * Math.PI * j / N) * Math.Sin(Math.PI * i / M);
-                    double z = R * Math.Sin(2 * Math.PI * j / N) * Math.Sin(Math.PI * i / M);
-                    double y = R * Math.Cos(Math.PI * i / M);
-                    double xx = (R + 1) * Math.Cos(2 * Math.PI * j / N) * Math.Sin(Math.PI * i / M);
-                    double zz = (R + 1) * Math.Sin(2 * Math.PI * j / N) * Math.Sin(Math.PI * i / M);
-                    double yy = (R + 1) * Math.Cos(Math.PI * i / M);
+                    double x = Radius * Math.Cos(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double z = Radius * Math.Sin(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double y = Radius * Math.Cos(Math.PI * i / HorizontalSegments);
+                    double xx = (Radius + 1) * Math.Cos(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double zz = (Radius + 1) * Math.Sin(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double yy = (Radius + 1) * Math.Cos(Math.PI * i / HorizontalSegments);
                     points.Add(new Vector3D(x, y, z));
                     pointsForNormals.Add(new Vector3D(xx, yy, zz));
                 }
             }
-            points.Add(new Vector3D(0, -R, 0));
-            pointsForNormals.Add(new Vector3D(0, -(R + 1), 0));
+            points.Add(new Vector3D(0, -Radius, 0));
+            pointsForNormals.Add(new Vector3D(0, -(Radius + 1), 0));
             id = counter++;
             base.SaveOriginalState();
         }
 
         public Sphere(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            N = (int)info.GetValue("N", typeof(int));
-            M = (int)info.GetValue("M", typeof(int));
-            R = (double)info.GetValue("R", typeof(double));
+            VerticalSegments = (int)info.GetValue("N", typeof(int));
+            HorizontalSegments = (int)info.GetValue("M", typeof(int));
+            Radius = (double)info.GetValue("R", typeof(double));
         }
 
         public new void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("N", N);
-            info.AddValue("M", M);
-            info.AddValue("R", R);
+            info.AddValue("N", VerticalSegments);
+            info.AddValue("M", HorizontalSegments);
+            info.AddValue("R", Radius);
         }
 
         public override List<Triangle> GetTriangles()
@@ -72,7 +73,7 @@ namespace lab4
             ApplyTrasformations();
             var result = new List<Triangle>();
 
-            for (int j = 0; j < N - 1; j++)
+            for (int j = 0; j < VerticalSegments - 1; j++)
             {
                 result.Add(new Triangle(points[0], points[j + 1], points[j + 2],
                                 pointsForNormals[0], pointsForNormals[j + 1], pointsForNormals[j + 2],
@@ -80,25 +81,25 @@ namespace lab4
                                 Color));
             }
 
-            for (int i = 0; i < M - 3; i++)
+            for (int i = 0; i < HorizontalSegments - 3; i++)
             {
-                for (int j = 0; j <= N; j++)
+                for (int j = 0; j <= VerticalSegments; j++)
                 {
-                    result.Add(new Triangle(points[i * N + j + 1], points[i * N + j], points[(i + 1) * N + j],
-                                    pointsForNormals[i * N + j + 1], pointsForNormals[i * N + j], pointsForNormals[(i + 1) * N + j],
-                                    points[i * N + j + 1], points[i * N + j], points[(i + 1) * N + j],
+                    result.Add(new Triangle(points[i * VerticalSegments + j + 1], points[i * VerticalSegments + j], points[(i + 1) * VerticalSegments + j],
+                                    pointsForNormals[i * VerticalSegments + j + 1], pointsForNormals[i * VerticalSegments + j], pointsForNormals[(i + 1) * VerticalSegments + j],
+                                    points[i * VerticalSegments + j + 1], points[i * VerticalSegments + j], points[(i + 1) * VerticalSegments + j],
                                     Color));
-                    result.Add(new Triangle(points[i * N + j + 1], points[(i + 1) * N + j], points[(i + 1) * N + j + 1],
-                                    pointsForNormals[i * N + j + 1], pointsForNormals[(i + 1) * N + j], pointsForNormals[(i + 1) * N + j + 1],
-                                    points[i * N + j + 1], points[(i + 1) * N + j], points[(i + 1) * N + j + 1],
+                    result.Add(new Triangle(points[i * VerticalSegments + j + 1], points[(i + 1) * VerticalSegments + j], points[(i + 1) * VerticalSegments + j + 1],
+                                    pointsForNormals[i * VerticalSegments + j + 1], pointsForNormals[(i + 1) * VerticalSegments + j], pointsForNormals[(i + 1) * VerticalSegments + j + 1],
+                                    points[i * VerticalSegments + j + 1], points[(i + 1) * VerticalSegments + j], points[(i + 1) * VerticalSegments + j + 1],
                                     Color));
                 }
             }
-            for (int j = 1; j < N; j++)
+            for (int j = 1; j < VerticalSegments; j++)
             {
-                result.Add(new Triangle(points[points.Count - 1], points[(M - 3) * N + j + 1], points[(M - 3) * N + j],
-                                pointsForNormals[points.Count - 1], pointsForNormals[(M - 3) * N + j + 1], pointsForNormals[(M - 3) * N + j],
-                                points[points.Count - 1], points[(M - 3) * N + j + 1], points[(M - 3) * N + j],
+                result.Add(new Triangle(points[points.Count - 1], points[(HorizontalSegments - 3) * VerticalSegments + j + 1], points[(HorizontalSegments - 3) * VerticalSegments + j],
+                                pointsForNormals[points.Count - 1], pointsForNormals[(HorizontalSegments - 3) * VerticalSegments + j + 1], pointsForNormals[(HorizontalSegments - 3) * VerticalSegments + j],
+                                points[points.Count - 1], points[(HorizontalSegments - 3) * VerticalSegments + j + 1], points[(HorizontalSegments - 3) * VerticalSegments + j],
                                 Color));
             }
 
@@ -108,6 +109,48 @@ namespace lab4
         public override string ToString()
         {
             return "Sphere " + counter;
+        }
+
+        public override void ApplyProperties(PrimitiveProperties properties)
+        {
+            this.VerticalSegments = properties.verticalSegments ?? this.VerticalSegments;
+            this.HorizontalSegments = properties.horizontalSegments ?? this.HorizontalSegments;
+            this.Radius = properties.radius ?? this.Radius;
+
+            points = new List<Vector3D>();
+            pointsForNormals = new List<Vector3D>();
+            points.Add(new Vector3D(0, Radius, 0));
+            pointsForNormals.Add(new Vector3D(0, Radius + 1, 0));
+            for (int i = 1; i < HorizontalSegments - 1; i++)
+            {
+                for (int j = 0; j < VerticalSegments; j++)
+                {
+                    double x = Radius * Math.Cos(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double z = Radius * Math.Sin(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double y = Radius * Math.Cos(Math.PI * i / HorizontalSegments);
+                    double xx = (Radius + 1) * Math.Cos(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double zz = (Radius + 1) * Math.Sin(2 * Math.PI * j / VerticalSegments) * Math.Sin(Math.PI * i / HorizontalSegments);
+                    double yy = (Radius + 1) * Math.Cos(Math.PI * i / HorizontalSegments);
+                    points.Add(new Vector3D(x, y, z));
+                    pointsForNormals.Add(new Vector3D(xx, yy, zz));
+                }
+            }
+            points.Add(new Vector3D(0, -Radius, 0));
+            pointsForNormals.Add(new Vector3D(0, -(Radius + 1), 0));
+
+            base.SaveOriginalState();
+            ResetScale();
+            ApplyTrasformations();
+        }
+
+        public override PrimitiveProperties CreateProperties()
+        {
+            return new PrimitiveProperties
+            {
+                radius = this.Radius,
+                verticalSegments = this.VerticalSegments,
+                horizontalSegments = this.HorizontalSegments
+            };
         }
     }
 

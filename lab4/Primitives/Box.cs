@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
+using lab4.Primitives;
 
 namespace lab4
 {
@@ -70,7 +71,17 @@ namespace lab4
 
         public Box(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            
+            // empty for purpose
+        }
+
+        public override void ApplyProperties(PrimitiveProperties properties)
+        {
+            // empty for purpose
+        }
+
+        public override PrimitiveProperties CreateProperties()
+        {
+            return new PrimitiveProperties();
         }
 
         public new void GetObjectData(SerializationInfo info, StreamingContext context)

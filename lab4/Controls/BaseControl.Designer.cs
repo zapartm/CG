@@ -44,6 +44,7 @@
             this.apply_Button.TabIndex = 42;
             this.apply_Button.Text = "Apply";
             this.apply_Button.UseVisualStyleBackColor = true;
+            this.apply_Button.Click += new System.EventHandler(this.apply_Button_Click);
             // 
             // nameLabel
             // 
@@ -92,7 +93,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button apply_Button;
+        public System.Windows.Forms.Button apply_Button;
         protected System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Panel panel1;
         protected System.Windows.Forms.Panel ControlsContainer;

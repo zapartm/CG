@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
+using lab4.Primitives;
 
 namespace lab4
 {
@@ -73,8 +74,13 @@ namespace lab4
             rotationMatrix = new Matrix4x4();
             scaleMatrix = new Matrix4x4();
         }
-        abstract public List<Triangle> GetTriangles();
 
+        public abstract List<Triangle> GetTriangles();
+
+        public abstract void ApplyProperties(PrimitiveProperties properties);
+        public abstract PrimitiveProperties CreateProperties();
+
+        #region serialization
         public Primitive(SerializationInfo info, StreamingContext ctxt)
         {
             //Get the values from info and assign them to the appropriate properties
@@ -94,6 +100,7 @@ namespace lab4
             ScaleY = (double)info.GetValue("sy", typeof(double));
             ScaleZ = (double)info.GetValue("sz", typeof(double));
             id = (int)info.GetValue("id", typeof(int));
+            primitiveType = (PrimitiveType)info.GetValue("type", typeof(PrimitiveType));
             SaveOriginalState();
         }
 
@@ -115,7 +122,9 @@ namespace lab4
             info.AddValue("sy", ScaleY);
             info.AddValue("sz", ScaleZ);
             info.AddValue("id", id);
+            info.AddValue("type", primitiveType);
         }
+        #endregion
 
         public void SaveOriginalState()
         {
@@ -130,7 +139,6 @@ namespace lab4
                 pointsForNormalsOriginal.AddRange(pointsForNormals);
             }
         }
-
 
         protected void ApplyTrasformations()
         {
@@ -216,6 +224,12 @@ namespace lab4
             ScaleX = x;
             ScaleY = y;
             ScaleZ = z;
+        }
+
+        public void ResetScale()
+        {
+            Matrix4x4 Mmod = new Matrix4x4();
+            scaleMatrix = Mmod;
         }
 
         #endregion

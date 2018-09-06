@@ -1,4 +1,6 @@
-﻿namespace lab4
+﻿using System;
+
+namespace lab4
 {
     partial class ConeCylinderControl
     {
@@ -109,6 +111,8 @@
             this.ResumeLayout(false);
 
         }
+
+        
 
         #endregion
 

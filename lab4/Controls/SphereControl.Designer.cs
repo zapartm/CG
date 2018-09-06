@@ -1,4 +1,6 @@
-﻿namespace lab4
+﻿using System;
+
+namespace lab4
 {
     partial class SphereControl
     {
@@ -104,7 +106,6 @@
             this.ResumeLayout(false);
 
         }
-
         #endregion
 
         private System.Windows.Forms.TextBox radius_textbox;

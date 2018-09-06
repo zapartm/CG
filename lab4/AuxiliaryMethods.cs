@@ -103,7 +103,7 @@ namespace lab4
                         int resultDim1 = result.GetLength(0);
                         int resultDim2 = result.GetLength(1);
 
-                        for (int scanLine = (int)y1; scanLine >= ymin; scanLine--)
+                        for (int scanLine = (int)y1; (scanLine >= ymin && scanLine >= 0); scanLine--)
                         {
                             if (currx1 < 0) currx1 = 0;
                             if (currx2 < 0) currx2 = 0;
@@ -195,7 +195,7 @@ namespace lab4
                         double I3 = PM.calculateIntensity(c, tt.Item2.WorldCoordinates[2], tt.Item2.normalVectors[2]);
                         double I = 0;
 
-                        for (int scanLine = (int)y1; scanLine <= ymin; scanLine++)
+                        for (int scanLine = (int)y1; (scanLine <= ymin && scanLine < result.GetLength(0)); scanLine++)
                         {
                             if (currx1 < 0) currx1 = 0;
                             double d = Math.Abs(currx1 - currx2);

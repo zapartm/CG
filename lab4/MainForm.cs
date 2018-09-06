@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using lab4.Primitives;
 
 namespace lab4
 {
@@ -22,6 +23,7 @@ namespace lab4
         Primitive activeObject;
         Camera activeCamera;
         Settings settings = Settings.GetInstance();
+        PrimitiveProperties properties = new PrimitiveProperties();
 
         private BoxControl boxControl = new BoxControl();
         private SphereControl sphereControl = new SphereControl();
@@ -237,6 +239,7 @@ namespace lab4
             }
         }
 
+        #region mouse event handlers
         private bool mouseDown = false;
         Point lastMousePosition;
         int movementCounterX = 0;
@@ -315,6 +318,7 @@ namespace lab4
                 mouseDown = false;
             }
         }
+        #endregion
 
         public enum PrimitiveType
         {
@@ -366,6 +370,7 @@ namespace lab4
 
             this.panel3.Controls.Clear();
             var type = activeObject.GetType;
+            this.properties = activeObject.CreateProperties();
             switch (type)
             {
                 case PrimitiveType.Box:
@@ -385,7 +390,15 @@ namespace lab4
                 default:
                     throw new ApplicationException("Unknown primitive type");
             }
-            //this.panel3.Refresh();
+            if(panel3.Controls.Count > 0)
+            {
+                BaseControl control = panel3.Controls[0] as BaseControl;
+                control.Properties = this.properties;
+                control.RefreshData();
+                control.apply_Button.Click += ((_sender, _e) => activeObject.ApplyProperties(this.properties));
+                control.apply_Button.Click += ((_sender, _e) => RenderScene());
+            }
+
             this.ResumeLayout(false);
         }
 
@@ -408,6 +421,20 @@ namespace lab4
 
             RenderScene();
         }
+        
+        #region Tool Strip handlers
+        public void Clear()
+        {
+            activeObject = null;
+            objects.Clear();
+            listBox1.Items.Clear();
+            RenderScene();
+        }
+
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -416,14 +443,6 @@ namespace lab4
             bformatter.Serialize(stream, objects);
             stream.Close();
             Clear();
-        }
-
-        public void Clear()
-        {
-            activeObject = null;
-            objects.Clear();
-            listBox1.Items.Clear();
-            RenderScene();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -439,6 +458,7 @@ namespace lab4
             stream.Close();
             RenderScene();
         }
+        #endregion
 
         // Light tab
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -489,10 +509,7 @@ namespace lab4
         }
 
         // clear
-        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Clear();
-        }
+       
 
         private void optionsButton_Click(object sender, EventArgs e)
         {

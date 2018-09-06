@@ -46,7 +46,7 @@ namespace lab4
                 Is = k_s * I_light * Math.Pow(VRdot, n_shiny);
 
             //System.Diagnostics.Debug.WriteLine(L.X + " " + L.Y + " " + L.Z);
-            return Id + Is;
+            return Math.Min(Id + Is, 1);
         }
     }
     
