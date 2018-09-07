@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static lab4.MainForm;
-using lab4.Primitives;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -19,14 +19,14 @@ namespace lab4
             InitializeComponent();
         }
 
-        public void SetControlName(PrimitiveType primitiveType)
+        public void SetControlName(ObjectType primitiveType)
         {
-            if (primitiveType == PrimitiveType.Cylinder)
+            if (primitiveType == ObjectType.Cylinder)
             {
                 nameLabel.Text = "Cylinder";
             }
 
-            if (primitiveType == PrimitiveType.Cone)
+            if (primitiveType == ObjectType.Cone)
             {
                 nameLabel.Text = "Cone";
             }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using System.Drawing;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -14,16 +15,17 @@ namespace lab4
         public double k_s;
         public double I_light;
         public double n_shiny;
-
+        public LightType lightType;
         public Vector3D lightPosition;
 
-        public PhongModel(double x, double y, double z)
+        public PhongModel(double x, double y, double z, LightType lightType)
         {
             k_d = 0.5;
             k_s = 0.5;
             I_light = 0.8;
             n_shiny = 1;
             lightPosition = new Vector3D(x, y, z);
+            this.lightType = lightType;
         }
 
         public double calculateIntensity(Camera c, Vector3D vertex, Vector4D N)

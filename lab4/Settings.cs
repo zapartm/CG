@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -22,6 +23,7 @@ namespace lab4
                     instance.BackfaceCulling = true;
                     instance.ShowMesh = true;
                     instance.ShowNormals = false;
+                    instance.Light = LightType.Gouraud;
                 }
             }
 
@@ -31,6 +33,7 @@ namespace lab4
         public bool BackfaceCulling { get; set; }
         public bool ShowNormals { get; set; }
         public bool ShowMesh { get; set; }
+        public LightType Light { get; set; }
 
     }
 }

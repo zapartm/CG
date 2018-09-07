@@ -15,12 +15,28 @@ namespace lab4
         public Vector3D position;
         public int fov;
         private int id;
+
         public Camera(Vector3D position, Vector3D target, int fov)
         {
             this.position = position;
             this.target = target;
             this.fov = fov;
             id = counter++;
+        }
+
+        public ObjectProperties CreateProperties()
+        {
+            return new ObjectProperties
+            {
+                position = this.position,
+                target = this.target
+            };
+        }
+
+        public void ApplyProperties(ObjectProperties properties)
+        {
+            this.target = properties.target;
+            this.position = properties.position;
         }
 
         public void MoveTarget(double dx, double dy, double dz)
@@ -40,7 +56,7 @@ namespace lab4
 
         public override bool Equals(object obj)
         {
-            if (obj == null) return false; 
+            if (obj == null) return false;
             var c = obj as Camera;
             if (c == null) return false;
             return c.fov == this.fov && c.position.Equals(this.position) && c.target.Equals(this.target);

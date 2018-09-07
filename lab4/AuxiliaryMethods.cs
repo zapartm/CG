@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using System.Drawing;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -49,6 +50,9 @@ namespace lab4
             foreach (var t in li)
             {
                 Tuple<Triangle, Triangle> tt = t.SplitHorizontal();
+                double intensityFlat = (PM.calculateIntensity(c, t.WorldCoordinates[0], t.normalVectors[0]) +
+                                        PM.calculateIntensity(c, t.WorldCoordinates[1], t.normalVectors[1]) +
+                                        PM.calculateIntensity(c, t.WorldCoordinates[2], t.normalVectors[2])) / 3;
 
                 if (tt.Item1 != null)
                 {
@@ -89,7 +93,7 @@ namespace lab4
                             {
                                 result[(int)y1, i] = z;
                                 double I = PM.calculateIntensity(c, tt.Item1.WorldCoordinates[0], tt.Item1.normalVectors[1]);
-                                colors[(int)y1, i] = Color.FromArgb((int)(tt.Item1.color.R * I)%256, (int)(tt.Item1.color.G * I)%256, (int)(tt.Item1.color.B * I)%256);
+                                colors[(int)y1, i] = Color.FromArgb((int)(tt.Item1.color.R * I) % 256, (int)(tt.Item1.color.G * I) % 256, (int)(tt.Item1.color.B * I) % 256);
                             }
                         }
                     }
@@ -98,7 +102,7 @@ namespace lab4
                         double I1 = PM.calculateIntensity(c, tt.Item1.WorldCoordinates[0], tt.Item1.normalVectors[0]);
                         double I2 = PM.calculateIntensity(c, tt.Item1.WorldCoordinates[1], tt.Item1.normalVectors[1]);
                         double I3 = PM.calculateIntensity(c, tt.Item1.WorldCoordinates[2], tt.Item1.normalVectors[2]);
-                        double I = (I1 + I2 + I3) / 3;
+                        double I = 0;
 
                         int resultDim1 = result.GetLength(0);
                         int resultDim2 = result.GetLength(1);
@@ -112,7 +116,7 @@ namespace lab4
                             {
                                 if (d == 0) break;
                                 double z = currz2 * ((double)i / d) + currz1 * (1 - (double)i / d);
-                                
+
                                 if ((int)currx1 + i < resultDim2 && scanLine < resultDim1 && result[scanLine, (int)currx1 + i] > z + eps)
                                 {
                                     result[scanLine, (int)currx1 + i] = z;
@@ -125,7 +129,14 @@ namespace lab4
                                     var p2 = a2.GetArea();
                                     var p3 = a3.GetArea();
 
-                                    I = I1 * p1 / a + I2 * p2 / a + I3 * p3 / a;
+                                    if (PM.lightType == LightType.Gouraud)
+                                    {
+                                        I = I1 * p1 / a + I2 * p2 / a + I3 * p3 / a;
+                                    }
+                                    else
+                                    {
+                                        I = intensityFlat;
+                                    }
 
                                     int R = (int)(tt.Item1.color.R * I) % 256;
                                     int G = (int)(tt.Item1.color.G * I) % 256;
@@ -204,8 +215,8 @@ namespace lab4
                                 if (d == 0) break;
                                 double z = currz2 * ((double)i / d) + currz1 * (1 - (double)i / d);
 
-                                if ((int)currx1 + i < viewPortLength && 
-                                    scanLine < viewPortHeight && 
+                                if ((int)currx1 + i < viewPortLength &&
+                                    scanLine < viewPortHeight &&
                                     scanLine >= 0 &&
                                     (int)currx1 + i >= 0 &&
                                     result[scanLine, (int)currx1 + i] > z)
@@ -220,12 +231,16 @@ namespace lab4
                                     var p2 = a2.GetArea();
                                     var p3 = a3.GetArea();
 
-                                    I = I1 * p1 / a + I2 * p2 / a + I3 * p3 / a;
-                                    I = I3 * p1 / a + I2 * p2 / a + I1 * p3 / a;
+                                    if (PM.lightType == LightType.Gouraud)
+                                    {
+                                        I = I3 * p1 / a + I2 * p2 / a + I1 * p3 / a;
+                                    }
+                                    else
+                                    {
+                                        I = intensityFlat;
+                                    }
 
                                     colors[scanLine, (int)currx1 + i] = Color.FromArgb((int)(tt.Item2.color.R * I) % 256, (int)(tt.Item2.color.G * I) % 256, (int)(tt.Item2.color.B * I) % 256);
-                                    //colors[scanLine, (int)currx1 + i] = Color.Black;
-
                                 }
                             }
                             currx1 += invSlope1;
@@ -270,7 +285,7 @@ namespace lab4
             M2[1, 3] = -position.Y;
             M2[2, 3] = -position.Z;
             return M * M2;
-        } 
+        }
 
         public static Vector3D CreateNormalVectorToSurface(Vector3D p1, Vector3D p2, Vector3D p3)
         {

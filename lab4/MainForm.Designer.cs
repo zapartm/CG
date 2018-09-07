@@ -1,4 +1,7 @@
-﻿namespace lab4
+﻿using lab4.Controls;
+using static lab4.Commons;
+
+namespace lab4
 {
     partial class MainForm
     {
@@ -28,6 +31,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.UserControls.Add(ObjectType.Box, new BoxControl());
+            this.UserControls.Add(ObjectType.Sphere, new SphereControl());
+
+            var tmpConeControl = new ConeCylinderControl();
+            tmpConeControl.SetControlName(ObjectType.Cone);
+            this.UserControls.Add(ObjectType.Cone, tmpConeControl);
+
+            var tmpCylinderControl = new ConeCylinderControl();
+            tmpCylinderControl.SetControlName(ObjectType.Cylinder);
+            this.UserControls.Add(ObjectType.Cylinder, tmpCylinderControl);
+
+            this.UserControls.Add(ObjectType.Camera, new CameraLightControl());
+            this.UserControls.Add(ObjectType.Light, new CameraLightControl());
+
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();

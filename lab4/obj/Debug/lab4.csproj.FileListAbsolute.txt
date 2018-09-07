@@ -13,3 +13,4 @@ C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-mast
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.MainForm.resources
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.ConeCylinderControl.resources
 C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.SphereControl.resources
+C:\Users\Tomasz Zapart\Downloads\Computer-Graphics-master\Computer-Graphics-master\Projekt4\lab4\lab4\obj\Debug\lab4.Controls.CameraLightControl.resources

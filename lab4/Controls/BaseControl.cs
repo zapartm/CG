@@ -7,22 +7,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using lab4.Primitives;
 
 namespace lab4
 {
-    public abstract partial class BaseControl : UserControl
+    public partial class BaseControl : UserControl
     {
-        public PrimitiveProperties Properties { get; set; }
+        public ObjectProperties Properties { get; set; }
 
         public BaseControl()
         {
             InitializeComponent();
         }
 
-        public abstract void RefreshData();
+        /// <summary>
+        /// For refreshing layout after selected item change
+        /// </summary>
+        public virtual void RefreshData()
+        {
+            
+        }
 
-        protected abstract void apply_Button_Click(object sender, EventArgs e);
+        /// <summary>
+        /// for aplying changes in parameters
+        /// </summary>
+        protected virtual void apply_Button_Click(object sender, EventArgs e)
+        {
+
+        }
 
     }
 }

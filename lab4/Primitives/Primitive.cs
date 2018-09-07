@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
-using lab4.Primitives;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -18,8 +18,8 @@ namespace lab4
         protected int id;
         protected int idUnique;
 
-        private PrimitiveType primitiveType;
-        public new virtual PrimitiveType GetType
+        private ObjectType primitiveType;
+        public new virtual ObjectType GetType
         {
             get { return primitiveType; }
             protected set { primitiveType = value; }
@@ -77,8 +77,8 @@ namespace lab4
 
         public abstract List<Triangle> GetTriangles();
 
-        public abstract void ApplyProperties(PrimitiveProperties properties);
-        public abstract PrimitiveProperties CreateProperties();
+        public abstract void ApplyProperties(ObjectProperties properties);
+        public abstract ObjectProperties CreateProperties();
 
         #region serialization
         public Primitive(SerializationInfo info, StreamingContext ctxt)
@@ -100,7 +100,7 @@ namespace lab4
             ScaleY = (double)info.GetValue("sy", typeof(double));
             ScaleZ = (double)info.GetValue("sz", typeof(double));
             id = (int)info.GetValue("id", typeof(int));
-            primitiveType = (PrimitiveType)info.GetValue("type", typeof(PrimitiveType));
+            primitiveType = (ObjectType)info.GetValue("type", typeof(ObjectType));
             SaveOriginalState();
         }
 

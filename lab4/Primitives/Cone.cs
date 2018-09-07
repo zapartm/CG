@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
-using lab4.Primitives;
+using static lab4.Commons;
 
 namespace lab4
 
@@ -24,7 +24,7 @@ namespace lab4
         public Cone(Color color) : base()
         {
             base.Color = color;
-            base.GetType = PrimitiveType.Cone;
+            base.GetType = ObjectType.Cone;
 
             Segments = 3;
             Radius = 1;
@@ -103,7 +103,7 @@ namespace lab4
             return "Cone " + counter;
         }
 
-        public override void ApplyProperties(PrimitiveProperties properties)
+        public override void ApplyProperties(ObjectProperties properties)
         {
             this.Segments = properties.segments ?? this.Segments;
             this.Radius = properties.radius ?? this.Radius;
@@ -136,9 +136,9 @@ namespace lab4
             ApplyTrasformations();
         }
 
-        public override PrimitiveProperties CreateProperties()
+        public override ObjectProperties CreateProperties()
         {
-            return new PrimitiveProperties
+            return new ObjectProperties
             {
                 radius = this.Radius,
                 height = this.Height,

@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using lab4.Primitives;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -22,21 +22,20 @@ namespace lab4
         List<Camera> cameras;
         Primitive activeObject;
         Camera activeCamera;
+        PhongModel lightModel;
         Settings settings = Settings.GetInstance();
-        PrimitiveProperties properties = new PrimitiveProperties();
+        ObjectProperties properties = new ObjectProperties();
 
-        private BoxControl boxControl = new BoxControl();
-        private SphereControl sphereControl = new SphereControl();
-        private ConeCylinderControl coneCylinderControl = new ConeCylinderControl();
+        private Dictionary<ObjectType, BaseControl> UserControls = new Dictionary<ObjectType, BaseControl>();
 
         public MainForm()
         {
             InitializeComponent();
             ContextMenu cm = new ContextMenu();
-            cm.MenuItems.Add("Add Box", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Box)));
-            cm.MenuItems.Add("Add Sphere", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Sphere)));
-            cm.MenuItems.Add("Add Cone", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Cone)));
-            cm.MenuItems.Add("Add Cylinder", new EventHandler((sender, args) => AddPrimitive(PrimitiveType.Cylinder)));
+            cm.MenuItems.Add("Add Box", new EventHandler((sender, args) => AddPrimitive(ObjectType.Box)));
+            cm.MenuItems.Add("Add Sphere", new EventHandler((sender, args) => AddPrimitive(ObjectType.Sphere)));
+            cm.MenuItems.Add("Add Cone", new EventHandler((sender, args) => AddPrimitive(ObjectType.Cone)));
+            cm.MenuItems.Add("Add Cylinder", new EventHandler((sender, args) => AddPrimitive(ObjectType.Cylinder)));
             listBox1.ContextMenu = cm;
 
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -44,7 +43,7 @@ namespace lab4
             objects = new List<Primitive>();
             cameras = new List<Camera>();
             activeCamera = new Camera(new Vector3D(2, 4, 5), new Vector3D(0, 0, 0), 30);
-            pm = new PhongModel(0, 4, 4);
+            lightModel = new PhongModel(0, 4, 4, LightType.Gouraud);
             cameras.Add(activeCamera);
             listBox2.Items.Add(activeCamera);
 
@@ -53,6 +52,7 @@ namespace lab4
 
         void RenderScene()
         {
+            lightModel.lightType = settings.Light;
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
 
@@ -107,7 +107,7 @@ namespace lab4
             });
 
             Color?[,] pixelColors;
-            double[,] zbuff = AuxiliaryMethods.CreateZbufferArray(triangles, out pixelColors, pictureBox1.Height, pictureBox1.Width, pm, activeCamera);
+            double[,] zbuff = AuxiliaryMethods.CreateZbufferArray(triangles, out pixelColors, pictureBox1.Height, pictureBox1.Width, lightModel, activeCamera);
 
             double min = 2, max = -1;
             for (int i = 0; i < zbuff.GetLength(0); i++)
@@ -131,7 +131,7 @@ namespace lab4
                 unsafe
                 {
                     BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-                    int bytesPerPixel = System.Drawing.Bitmap.GetPixelFormatSize(bmp.PixelFormat) / 8;
+                    int bytesPerPixel = Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
                     int heightInPixels = bitmapData.Height;
                     int widthInBytes = bitmapData.Width * bytesPerPixel;
                     byte* ptrFirstPixel = (byte*)bitmapData.Scan0;
@@ -232,11 +232,12 @@ namespace lab4
         {
             bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             this.pictureBox1.Image = bmp;
-            if (!isInitialRun)
-            {
-                RenderScene();
-                isInitialRun = false;
-            }
+            //if (!isInitialRun)
+            //{
+            //    RenderScene();
+            //    isInitialRun = false;
+            //}
+            RenderScene();
         }
 
         #region mouse event handlers
@@ -320,27 +321,23 @@ namespace lab4
         }
         #endregion
 
-        public enum PrimitiveType
-        {
-            Box, Sphere, Cone, Cylinder
-        };
-
-        public void AddPrimitive(PrimitiveType type)
+    
+        public void AddPrimitive(ObjectType type)
         {
             activeObject = null;
             Primitive primitive = null;
             switch (type)
             {
-                case PrimitiveType.Box:
+                case ObjectType.Box:
                     primitive = new Box(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
                     break;
-                case PrimitiveType.Cone:
+                case ObjectType.Cone:
                     primitive = new Cone(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
                     break;
-                case PrimitiveType.Cylinder:
+                case ObjectType.Cylinder:
                     primitive = new Cylinder(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
                     break;
-                case PrimitiveType.Sphere:
+                case ObjectType.Sphere:
                     primitive = new Sphere(colorsOfNewPrimitives[objects.Count % colorsOfNewPrimitives.Length]);
                     break;
             }
@@ -371,21 +368,20 @@ namespace lab4
             this.panel3.Controls.Clear();
             var type = activeObject.GetType;
             this.properties = activeObject.CreateProperties();
+            BaseControl tmpControl;
             switch (type)
             {
-                case PrimitiveType.Box:
-                    this.panel3.Controls.Add(boxControl);
+                case ObjectType.Box:
+                    this.panel3.Controls.Add(UserControls[ObjectType.Box]);
                     break;
-                case PrimitiveType.Sphere:
-                    this.panel3.Controls.Add(sphereControl);
+                case ObjectType.Sphere:
+                    this.panel3.Controls.Add(UserControls[ObjectType.Sphere]);
                     break;
-                case PrimitiveType.Cone:
-                    coneCylinderControl.SetControlName(PrimitiveType.Cone);
-                    this.panel3.Controls.Add(coneCylinderControl);
+                case ObjectType.Cone:
+                    this.panel3.Controls.Add(UserControls[ObjectType.Cone]);
                     break;
-                case PrimitiveType.Cylinder:
-                    coneCylinderControl.SetControlName(PrimitiveType.Cylinder);
-                    this.panel3.Controls.Add(coneCylinderControl);
+                case ObjectType.Cylinder:
+                    this.panel3.Controls.Add(UserControls[ObjectType.Cylinder]);
                     break;
                 default:
                     throw new ApplicationException("Unknown primitive type");
@@ -465,13 +461,17 @@ namespace lab4
         {
             if (activeCamera == null) return;
             activeCamera = listBox2.SelectedItem as Camera;
-            //textBox11.Text = activeCamera.position.X.ToString("0.0");
-            //textBox12.Text = activeCamera.position.Y.ToString("0.0");
-            //textBox13.Text = activeCamera.position.Z.ToString("0.0"); ;
-            //textBox14.Text = activeCamera.target.X.ToString("0.0");
-            //textBox15.Text = activeCamera.target.Y.ToString("0.0");
-            //textBox16.Text = activeCamera.target.Z.ToString("0.0");
-            //textBox21.Text = activeCamera.fov.ToString();
+            this.panel3.Controls.Clear();
+            this.properties = activeCamera.CreateProperties();
+            this.panel3.Controls.Add(UserControls[ObjectType.Camera]);
+            if (panel3.Controls.Count > 0)
+            {
+                BaseControl control = panel3.Controls[0] as BaseControl;
+                control.Properties = this.properties;
+                control.RefreshData();
+                control.apply_Button.Click += ((_sender, _e) => activeCamera.ApplyProperties(this.properties));
+                control.apply_Button.Click += ((_sender, _e) => RenderScene());
+            }
             RenderScene();
         }
 
@@ -481,35 +481,6 @@ namespace lab4
             listBox2.Items.Add(cameras[cameras.Count - 1]);
         }
 
-
-        // camera/light apply
-        PhongModel pm;
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //double px, py, pz, tx, ty, tz;
-            //int fov;
-
-            //if (double.TryParse(textBox11.Text, out px) && double.TryParse(textBox12.Text, out py) && double.TryParse(textBox13.Text, out pz))
-            //{
-            //    pm = new PhongModel(px, py, pz);
-            //}
-
-
-            //if (double.TryParse(textBox11.Text, out px) && double.TryParse(textBox12.Text, out py) && double.TryParse(textBox13.Text, out pz) &&
-            //    double.TryParse(textBox14.Text, out tx) && double.TryParse(textBox15.Text, out ty) && double.TryParse(textBox16.Text, out tz) &&
-            //    int.TryParse(textBox21.Text, out fov))
-            //{
-            //    cameras.Remove(activeCamera);
-            //    cameras.Add(new Camera(new Vector3D(px, py, pz), new Vector3D(tx, ty, tz), fov));
-            //    activeCamera = cameras[cameras.Count - 1];
-            //}
-
-            //RenderScene();
-            //System.Diagnostics.Debug.WriteLine("");
-        }
-
-        // clear
-       
 
         private void optionsButton_Click(object sender, EventArgs e)
         {

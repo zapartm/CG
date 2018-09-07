@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
-using lab4.Primitives;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -23,7 +23,7 @@ namespace lab4
         public Sphere(Color color) : base()
         {
             this.Color = color;
-            base.GetType = PrimitiveType.Sphere;
+            base.GetType = ObjectType.Sphere;
 
             HorizontalSegments = 30;
             VerticalSegments = 30;
@@ -111,7 +111,7 @@ namespace lab4
             return "Sphere " + counter;
         }
 
-        public override void ApplyProperties(PrimitiveProperties properties)
+        public override void ApplyProperties(ObjectProperties properties)
         {
             this.VerticalSegments = properties.verticalSegments ?? this.VerticalSegments;
             this.HorizontalSegments = properties.horizontalSegments ?? this.HorizontalSegments;
@@ -143,9 +143,9 @@ namespace lab4
             ApplyTrasformations();
         }
 
-        public override PrimitiveProperties CreateProperties()
+        public override ObjectProperties CreateProperties()
         {
-            return new PrimitiveProperties
+            return new ObjectProperties
             {
                 radius = this.Radius,
                 verticalSegments = this.VerticalSegments,

@@ -9,7 +9,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using static lab4.MainForm;
-using lab4.Primitives;
+using static lab4.Commons;
 
 namespace lab4
 {
@@ -23,7 +23,7 @@ namespace lab4
             points = new List<Vector3D>();
             pointsForNormals = new List<Vector3D>();
             this.Color = color;
-            base.GetType = PrimitiveType.Box;
+            base.GetType = ObjectType.Box;
 
             points.Add(new Vector3D(-0.5, 0, -0.5));
             points.Add(new Vector3D(0.5, 0, -0.5));
@@ -74,14 +74,14 @@ namespace lab4
             // empty for purpose
         }
 
-        public override void ApplyProperties(PrimitiveProperties properties)
+        public override void ApplyProperties(ObjectProperties properties)
         {
             // empty for purpose
         }
 
-        public override PrimitiveProperties CreateProperties()
+        public override ObjectProperties CreateProperties()
         {
-            return new PrimitiveProperties();
+            return new ObjectProperties();
         }
 
         public new void GetObjectData(SerializationInfo info, StreamingContext context)
