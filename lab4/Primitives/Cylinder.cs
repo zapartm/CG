@@ -125,6 +125,9 @@ namespace lab4
 
         public override void ApplyProperties(ObjectProperties properties)
         {
+            this.Height = properties.height ?? this.Height;
+            this.Radius = properties.radius ?? this.Radius;
+            this.Segments = properties.segments ?? this.Segments;
             points = new List<Vector3D>();
             pointsForNormals = new List<Vector3D>();
             var tmp = new List<Vector3D>();
