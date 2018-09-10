@@ -43,7 +43,7 @@ namespace lab4
             objects = new List<Primitive>();
             cameras = new List<Camera>();
             activeCamera = new Camera(new Vector3D(2, 4, 5), new Vector3D(0, 0, 0), 30);
-            lightModel = new PhongModel(0, 4, 4, LightType.Gouraud);
+            lightModel = new PhongModel(0, 4, 4, LightType.Gouraud); // LIGHT
             cameras.Add(activeCamera);
             listBox2.Items.Add(activeCamera);
 
@@ -321,7 +321,7 @@ namespace lab4
         }
         #endregion
 
-    
+
         public void AddPrimitive(ObjectType type)
         {
             activeObject = null;
@@ -386,7 +386,7 @@ namespace lab4
                 default:
                     throw new ApplicationException("Unknown primitive type");
             }
-            if(panel3.Controls.Count > 0)
+            if (panel3.Controls.Count > 0)
             {
                 BaseControl control = panel3.Controls[0] as BaseControl;
                 control.Properties = this.properties;
@@ -402,6 +402,15 @@ namespace lab4
         private void applyTRS_click(object sender, EventArgs e)
         {
             if (activeObject == null) return;
+            textBox1.Text = textBox1.Text.Replace('.', ',');
+            textBox2.Text = textBox2.Text.Replace('.', ',');
+            textBox3.Text = textBox3.Text.Replace('.', ',');
+            textBox4.Text = textBox4.Text.Replace('.', ',');
+            textBox5.Text = textBox5.Text.Replace('.', ',');
+            textBox6.Text = textBox6.Text.Replace('.', ',');
+            textBox7.Text = textBox7.Text.Replace('.', ',');
+            textBox8.Text = textBox8.Text.Replace('.', ',');
+            textBox9.Text = textBox9.Text.Replace('.', ',');
 
             double dx, dy, dz;
             if (double.TryParse(textBox1.Text, out dx) && double.TryParse(textBox2.Text, out dy) && double.TryParse(textBox3.Text, out dz))
@@ -417,7 +426,7 @@ namespace lab4
 
             RenderScene();
         }
-        
+
         #region Tool Strip handlers
         public void Clear()
         {
@@ -444,15 +453,25 @@ namespace lab4
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Clear();
-            //Open the file written above and read values from it.
-            Stream stream = File.Open("Scene.sc", FileMode.Open);
-            var bformatter = new BinaryFormatter();
+            try
+            {
+                Stream stream = File.Open("Scene.sc", FileMode.Open);
+                var bformatter = new BinaryFormatter();
 
-            objects = (List<Primitive>)bformatter.Deserialize(stream);
-            foreach (var o in objects)
-                listBox1.Items.Add(o);
-            stream.Close();
-            RenderScene();
+                objects = (List<Primitive>)bformatter.Deserialize(stream);
+                foreach (var o in objects)
+                    listBox1.Items.Add(o);
+                stream.Close();
+                RenderScene();
+            }
+            catch (Exception ee)
+            {
+                if(ee is FileNotFoundException)
+                {
+                    MessageBox.Show("No saved scenes found");
+                }
+            }
+
         }
         #endregion
 
